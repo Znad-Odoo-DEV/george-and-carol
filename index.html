@@ -454,11 +454,29 @@
 
       [data-in] {
         opacity: 0;
-        transform: translateY(14px);
+        /* Hidden by a clip that opens from the right — the direction the page
+           is read and written in. */
+        clip-path: inset(0 0 0 100%);
       }
 
       .scene[data-active] [data-in] {
+        animation: write-in 620ms var(--ease) calc(850ms + var(--i, 0) * 190ms) forwards;
+      }
+
+      /* Latin runs left to right, so the giant RSVP letters keep the plain
+         rise — wiping them right-to-left would read backwards. */
+      .scene[data-active] [data-in='rise'] {
         animation: rise-in 500ms var(--ease) calc(850ms + var(--i, 0) * 190ms) forwards;
+      }
+
+      [data-in='rise'] {
+        clip-path: none;
+        transform: translateY(14px);
+      }
+
+      @keyframes write-in {
+        from { opacity: 1; clip-path: inset(0 0 0 100%); }
+        to   { opacity: 1; clip-path: inset(0 0 0 0); }
       }
 
       /* Going backwards, content the guest has already read is simply there. */
@@ -466,6 +484,7 @@
         animation: none;
         opacity: 1;
         transform: none;
+        clip-path: none;
       }
 
       @keyframes rise-in {
@@ -1039,6 +1058,8 @@
         }
         .scene[data-leaving] { transform: none !important; }
 
+        [data-in] { clip-path: none !important; }
+
         [data-in],
         .timeline-rule,
         .block::before,
@@ -1250,10 +1271,10 @@
         <div class="rsvp-wrap">
           <!-- Latin letterforms, so tracking is safe here. Each arrives alone. -->
           <p class="rsvp-letters" aria-label="تأكيد الحضور">
-            <b data-in style="--i: 0">R</b>
-            <b data-in style="--i: 1">S</b>
-            <b data-in style="--i: 2">V</b>
-            <b data-in style="--i: 3">P</b>
+            <b data-in="rise" style="--i: 0">R</b>
+            <b data-in="rise" style="--i: 1">S</b>
+            <b data-in="rise" style="--i: 2">V</b>
+            <b data-in="rise" style="--i: 3">P</b>
             <svg class="sprig" viewBox="0 0 60 90" fill="none" aria-hidden="true">
               <path d="M30 88V16" stroke="#C9A227" stroke-width="1.2" stroke-linecap="round" opacity=".7" />
               <g fill="#C9A227" opacity=".65">
@@ -1286,7 +1307,7 @@
               target="_blank"
               rel="noopener"
               aria-label="اعتذار عبر واتساب إلى جورج"
-              >اعتذار — جورج</a
+              >اعتذار من جورج — واتساب</a
             >
             <a
               class="wa"
@@ -1295,7 +1316,7 @@
               target="_blank"
               rel="noopener"
               aria-label="اعتذار عبر واتساب إلى كارول"
-              >اعتذار — كارول</a
+              >اعتذار من كارول — واتساب</a
             >
           </div>
         </div>
@@ -1533,24 +1554,49 @@
 
       /* ── Autoplay. Any input hands control back, permanently. ──────────── */
 
-      const HOLD = [2000, 5500, 7000, 7000, 6000, Infinity]
+      /* A page turns when it has finished writing itself, not on a stopwatch.
+         Its hold is measured from the animations actually running on it, so
+         adding a line to a scene lengthens that scene automatically and no
+         table of durations can drift out of step with the content. */
+
+      const READ_PAUSE = 1400   // a beat to take in the last line before moving
+      const MIN_HOLD = 3200     // floor, so reduced motion does not flash past
+
+      function settleTime(scene) {
+        let end = 0
+        for (const a of scene.getAnimations({ subtree: true })) {
+          const t = a.effect && a.effect.getComputedTiming ? a.effect.getComputedTiming() : null
+          if (!t) continue
+          // Ken Burns and the breathing hint never end. They are ambience,
+          // not content, and must not hold the page open forever.
+          if (t.iterations === Infinity) continue
+          const e = (t.delay || 0) + (t.activeDuration || 0)
+          if (isFinite(e)) end = Math.max(end, e)
+        }
+        return end
+      }
 
       function queueAutoplay() {
         clearTimeout(autoTimer)
+        dots.forEach((d) => d.removeAttribute('data-timing'))
         if (!autoplay) return
-        const hold = HOLD[current]
-        // The finale holds forever, so no dot should be left mid-fill.
-        if (!isFinite(hold)) {
-          dots.forEach((d) => d.removeAttribute('data-timing'))
+
+        if (current === SCENES - 1) return       // the finale is where it rests
+
+        if (current === 0) {
+          if (!autoOpen) return                  // the seal waits for a hand
+          paintDotTimer(2000)
+          autoTimer = setTimeout(openEnvelope, 2000)
           return
         }
-        if (current === 0 && !autoOpen) return   // the seal waits for a hand
 
-        paintDotTimer(hold)
-        autoTimer = setTimeout(() => {
-          if (current === 0) openEnvelope()
-          else go(current + 1)
-        }, hold)
+        // Measure only once the entrance animations have registered.
+        requestAnimationFrame(() => {
+          if (!autoplay) return
+          const hold = Math.max(MIN_HOLD, settleTime(scenes[current]) + READ_PAUSE)
+          paintDotTimer(hold)
+          autoTimer = setTimeout(() => go(current + 1), hold)
+        })
       }
 
       function cancelAutoplay(alsoStop = true) {

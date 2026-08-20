@@ -1329,6 +1329,70 @@
       @keyframes spin { to { transform: rotate(360deg); } }
 
       /* ══════════════════════════════════════════════════════════════════
+         WIDE SCREENS
+
+         A 9:16 invitation on a laptop belongs in a frame, not spread across
+         the desk. Below the breakpoint nothing here applies and the phone
+         layout is untouched.
+         ═════════════════════════════════════════════════════════════════ */
+
+      @media (min-width: 48rem) and (min-aspect-ratio: 3 / 4) {
+        body {
+          /* The surface the invitation lies on. */
+          background:
+            radial-gradient(120% 90% at 50% 0%, #f6f1e7 0%, var(--offwhite) 45%, #e4dbcb 100%);
+        }
+
+        /* One width, shared by the deck and by every fixed layer, so they
+           stay locked together. */
+        #deck,
+        #loader,
+        .grain,
+        .dots,
+        .swipe-hint {
+          left: 50%;
+          right: auto;
+          /* A margin top and bottom, so the card's corners are visible and it
+             reads as an object on a surface rather than a full-height column. */
+          --inset: 22px;
+          width: min(100vw, calc((100svh - var(--inset) * 2) * 0.5625));
+          transform: translateX(-50%);
+        }
+
+        #deck,
+        #loader,
+        .grain {
+          top: var(--inset);
+          bottom: var(--inset);
+        }
+
+        #deck,
+        #loader {
+          border-radius: 18px;
+          box-shadow:
+            0 2px 4px rgba(94, 74, 48, 0.06),
+            0 40px 90px -40px rgba(74, 56, 32, 0.5);
+        }
+
+        /* The cue and the dots sit inside the frame, so they measure from its
+           foot rather than the window's. */
+        .dots { bottom: calc(var(--inset) + 20px); }
+        .swipe-hint { bottom: calc(var(--inset) + 44px); }
+
+        /* `transform` is what centres these two, and their own animation
+           would otherwise overwrite it. */
+        .swipe-hint[data-show] { animation: none; }
+        .swipe-hint svg { animation: breathe 2.6s ease-in-out infinite; }
+      }
+
+      /* A laptop is a pointer, not a finger: say so. */
+      @media (hover: hover) and (pointer: fine) {
+        .swipe-hint em {
+          font-style: normal;
+        }
+      }
+
+      /* ══════════════════════════════════════════════════════════════════
          REDUCED MOTION — the invitation still tells its story, it just
          stops moving. Nothing is hidden, nothing becomes unreachable.
          ═════════════════════════════════════════════════════════════════ */
@@ -1803,7 +1867,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
         <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
       </svg>
-      مرّر للأسفل
+      <em id="cueText">مرّر للأسفل</em>
     </div>
 
     <!-- Tolls once, on the tap that opens the doors. That tap is a user

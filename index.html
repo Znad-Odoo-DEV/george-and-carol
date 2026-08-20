@@ -52,7 +52,7 @@
         --reveal-angle: 32deg;
         --rise: 28.5%;            /* tan(32°) × card width, as % of card height */
         --seal-size: clamp(92px, 28vw, 132px);
-        --panel-height: 45svh;
+        --panel-height: 56svh;
         --panel-rise: 8%;         /* the cover panel's edge, ~11° — deliberately
                                      shallower than the reveal: a full 32° cut
                                      across type is unreadable */
@@ -758,8 +758,8 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 2px;
-        padding: 0 26px calc(46px + env(safe-area-inset-bottom));
+        gap: 1px;
+        padding: 0 24px calc(44px + env(safe-area-inset-bottom));
         text-align: center;
         background: rgba(255, 255, 255, 0.92);
         -webkit-backdrop-filter: blur(6px);
@@ -767,6 +767,36 @@
         /* Its top edge is cut on a diagonal — shallower than the reveal, so
            the first line of type is never clipped by it. */
         clip-path: polygon(0 var(--panel-rise), 100% 0, 100% 100%, 0 100%);
+      }
+
+      /* The two families, side by side with a hairline between them, as
+         they are set on the printed card. */
+      .families {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        margin-top: 2px;
+        font-family: var(--display);
+        font-size: clamp(14px, 4vw, 17px);
+        line-height: 1.7;
+        color: var(--ink);
+      }
+
+      .families i {
+        display: block;
+        width: 1px;
+        height: 26px;
+        background: var(--gold);
+        opacity: .5;
+      }
+
+      .request {
+        margin-top: 4px;
+        font-family: var(--serif);
+        font-size: 13px;
+        line-height: 1.8;
+        color: var(--body);
       }
 
       .when {
@@ -913,68 +943,20 @@
          SCENE 3 — ALL THE DETAILS
          ═════════════════════════════════════════════════════════════════ */
 
-      .blocks {
-        position: relative;
-        margin-top: clamp(22px, 6svh, 52px);
-        margin-bottom: auto;
-        padding-inline-start: 26px;
-      }
+      
 
-      .blocks::before {
-        content: '';
-        position: absolute;
-        inset-inline-start: 4px;
-        top: 8px;
-        bottom: 8px;
-        width: 1px;
-        background: var(--gold);
-        opacity: 0.4;
-      }
+      
 
-      .block { position: relative; padding-bottom: clamp(20px, 4.6svh, 34px); }
+      
 
-      .block::before {
-        content: '';
-        position: absolute;
-        inset-inline-start: -26px;
-        top: 7px;
-        width: 9px;
-        height: 9px;
-        margin-inline-start: 0;
-        background: var(--gold);
-        border-radius: 50%;
-        transform: translateX(50%) scale(0);
-      }
+      
 
-      .scene[data-active] .block::before {
-        animation: dot-in 420ms cubic-bezier(0.34, 1.56, 0.64, 1)
-          calc(770ms + var(--i, 0) * 190ms) forwards;
-      }
+      
 
-      .scene[data-active][data-instant] .block::before {
-        animation: none;
-        transform: translateX(50%) scale(1);
-      }
-
-      @keyframes dot-in { to { transform: translateX(50%) scale(1); } }
-
-      .block-title {
-        font-size: 14px;
-        font-weight: 700;
-        word-spacing: 0.2em;
-        color: #3a342c;
-      }
-
-      .block-body {
-        max-width: 26em;
-        margin-top: 6px;
-        font-size: 13px;
-        line-height: 1.75;
-        color: var(--body);
-      }
+      
 
       /* ══════════════════════════════════════════════════════════════════
-         SCENE 4 — RSVP
+         SCENE 3 — RSVP
          ═════════════════════════════════════════════════════════════════ */
 
       .rsvp-wrap {
@@ -1120,7 +1102,7 @@
       }
 
       /* ══════════════════════════════════════════════════════════════════
-         SCENE 5 — FINALE
+         SCENE 4 — FINALE
          ═════════════════════════════════════════════════════════════════ */
 
       .finale-names {
@@ -1408,7 +1390,6 @@
 
         [data-in],
         .timeline-rule,
-        .block::before,
         .frame i,
         .hearts path {
           animation: none !important;
@@ -1416,7 +1397,6 @@
           transform: none !important;
           stroke-dashoffset: 0 !important;
         }
-        .block::before { transform: translateX(50%) !important; }
         .frame .t, .frame .b { transform: scaleX(1) !important; }
         .frame .l, .frame .r { transform: scaleY(1) !important; }
         .timeline-rule { transform: scaleY(1) !important; }
@@ -1652,15 +1632,23 @@
 
           <p class="eyebrow" data-in style="--i: 0">دعوة زفاف</p>
 
-          <h1 class="names" data-in style="--i: 1">جورج &nbsp;و&nbsp; كارول</h1>
-          <span class="rule" data-in style="--i: 2" aria-hidden="true"></span>
+          <p class="families" data-in style="--i: 1">
+            <span>رياض عوض<br />وعائلته</span>
+            <i aria-hidden="true"></i>
+            <span>عون فيّاض<br />وعائلته</span>
+          </p>
 
-          <p class="verse" data-in style="--i: 3">
+          <p class="request" data-in style="--i: 2">يتشرفون بدعوتكم لحضور إكليل ولديهما</p>
+
+          <h1 class="names" data-in style="--i: 3">جورج &nbsp;و&nbsp; كارول</h1>
+          <span class="rule" data-in style="--i: 4" aria-hidden="true"></span>
+
+          <p class="verse" data-in style="--i: 5">
             عَرَّفْتُهُمُ اسْمَكَ وَسَأُعَرِّفُهُمْ
             <span>(يوحنا ١٧: ٢٦)</span>
           </p>
 
-          <p class="when" data-in style="--i: 4">
+          <p class="when" data-in style="--i: 6">
             <span>الأحد</span>
             <i aria-hidden="true"></i>
             <span>٢٠ / ٩ / ٢٠٢٦</span>
@@ -1725,42 +1713,8 @@
         </div>
       </section>
 
-      <!-- ══════════════ SCENE 3 — ALL THE DETAILS ══════════════ -->
-      <section class="scene" id="scene-3" aria-label="كل التفاصيل">
-        <div class="roses" aria-hidden="true">
-          <img src="assets/rose-bg.jpg" alt="" loading="lazy" onerror="this.remove()" />
-        </div>
-
-        <!-- Same ornament family, opposite corner — variety without novelty. -->
-        <div class="ornament ornament--br" aria-hidden="true">
-          <svg viewBox="0 0 220 190" fill="none" style="transform: scaleX(-1)"><use href="#ornamentArt" /></svg>
-          <img class="ornament-photo" src="assets/sprigs.jpg" alt="" loading="lazy" onerror="this.remove()" style="transform: scaleX(-1)" />
-        </div>
-
-        <div class="pad">
-          <h2 class="heading" data-in style="--i: 0">كل التفاصيل</h2>
-
-          <div class="blocks">
-            <div class="block" data-in style="--i: 1">
-              <p class="block-title">قواعد اللباس</p>
-              <p class="block-body">لباس رسمي أنيق — نرحّب بكم بألوان تليق بالمناسبة.</p>
-            </div>
-
-            <div class="block" data-in style="--i: 2">
-              <p class="block-title">المواصلات</p>
-              <p class="block-body">تتوفر مواقف للسيارات قرب الكنيسة والمطعم.</p>
-            </div>
-
-            <div class="block" data-in style="--i: 3">
-              <p class="block-title">ملاحظة</p>
-              <p class="block-body">تم تنسيق الزهور مسبقاً — التهاني في الكنيسة.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <!-- ══════════════ SCENE 4 — RSVP ══════════════ -->
-      <section class="scene" id="scene-4" aria-label="تأكيد الحضور">
+      <section class="scene" id="scene-3" aria-label="تأكيد الحضور">
         <div class="roses" aria-hidden="true">
           <img src="assets/rose-bg.jpg" alt="" loading="lazy" onerror="this.remove()" />
         </div>
@@ -1840,7 +1794,7 @@
       </section>
 
       <!-- ══════════════ SCENE 5 — FINALE ══════════════ -->
-      <section class="scene" id="scene-5" aria-label="ختام">
+      <section class="scene" id="scene-4" aria-label="ختام">
         <div class="photo photo--bw" aria-hidden="true">
           <img src="assets/finale.jpg" alt="" loading="lazy" onerror="this.remove()" />
         </div>
@@ -1920,7 +1874,7 @@
          unmounted mid-transition — that causes a flash.
          ═════════════════════════════════════════════════════════════════════ */
 
-      const SCENES = 6
+      const SCENES = 5
       const DUR = 700          // must match --scene-ms
       const LOCK = DUR + 100   // input is ignored for the whole transition
 

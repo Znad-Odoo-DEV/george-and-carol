@@ -1505,6 +1505,15 @@
 <linearGradient id="door-left-gold" x1="0" y1="0" x2="0.6" y2="1">
 <stop offset="0%" stop-color="#eed7a0"/><stop offset="50%" stop-color="#c9a768"/><stop offset="100%" stop-color="#8f7240"/>
 </linearGradient>
+<filter id="door-left-grain" x="0" y="0" width="100%" height="100%">
+<feTurbulence type="fractalNoise" baseFrequency="0.85 0.014" numOctaves="4" seed="7"/>
+<feColorMatrix type="saturate" values="0"/>
+</filter>
+<linearGradient id="door-left-fall" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="#fff2d8" stop-opacity=".16"/>
+<stop offset="42%" stop-color="#000000" stop-opacity="0"/>
+<stop offset="100%" stop-color="#100a04" stop-opacity=".42"/>
+</linearGradient>
 <linearGradient id="door-left-shade" x1="0" y1="0" x2="1" y2="0">
 <stop offset="0%" stop-color="#120c07" stop-opacity=".3"/><stop offset="16%" stop-color="#120c07" stop-opacity="0"/>
 <stop offset="80%" stop-color="#120c07" stop-opacity="0"/><stop offset="100%" stop-color="#120c07" stop-opacity=".5"/>
@@ -1512,7 +1521,12 @@
 </defs>
 <g clip-path="url(#door-left-clip)">
 <rect x="0" y="0" width="190" height="670" fill="url(#door-left-wood)"/>
-<line x1="21.1" y1="0" x2="21.1" y2="670" stroke="#2b1d12" stroke-width="1.6" opacity=".55"/><line x1="22.5" y1="0" x2="22.5" y2="670" stroke="#8a6a45" stroke-width="1" opacity=".28"/><line x1="42.2" y1="0" x2="42.2" y2="670" stroke="#2b1d12" stroke-width="1.6" opacity=".55"/><line x1="43.6" y1="0" x2="43.6" y2="670" stroke="#8a6a45" stroke-width="1" opacity=".28"/><line x1="63.3" y1="0" x2="63.3" y2="670" stroke="#2b1d12" stroke-width="1.6" opacity=".55"/><line x1="64.7" y1="0" x2="64.7" y2="670" stroke="#8a6a45" stroke-width="1" opacity=".28"/><line x1="84.4" y1="0" x2="84.4" y2="670" stroke="#2b1d12" stroke-width="1.6" opacity=".55"/><line x1="85.8" y1="0" x2="85.8" y2="670" stroke="#8a6a45" stroke-width="1" opacity=".28"/><line x1="105.6" y1="0" x2="105.6" y2="670" stroke="#2b1d12" stroke-width="1.6" opacity=".55"/><line x1="107.0" y1="0" x2="107.0" y2="670" stroke="#8a6a45" stroke-width="1" opacity=".28"/><line x1="126.7" y1="0" x2="126.7" y2="670" stroke="#2b1d12" stroke-width="1.6" opacity=".55"/><line x1="128.1" y1="0" x2="128.1" y2="670" stroke="#8a6a45" stroke-width="1" opacity=".28"/><line x1="147.8" y1="0" x2="147.8" y2="670" stroke="#2b1d12" stroke-width="1.6" opacity=".55"/><line x1="149.2" y1="0" x2="149.2" y2="670" stroke="#8a6a45" stroke-width="1" opacity=".28"/><line x1="168.9" y1="0" x2="168.9" y2="670" stroke="#2b1d12" stroke-width="1.6" opacity=".55"/><line x1="170.3" y1="0" x2="170.3" y2="670" stroke="#8a6a45" stroke-width="1" opacity=".28"/>
+<rect x="21.11" y="0" width="21.11" height="670" fill="#1a0f06" opacity="0.13"/><rect x="42.22" y="0" width="21.11" height="670" fill="#ffe6c4" opacity="0.06"/><rect x="63.33" y="0" width="21.11" height="670" fill="#0d0703" opacity="0.12"/><rect x="84.44" y="0" width="21.11" height="670" fill="#ffe6c4" opacity="0.09"/><rect x="126.67" y="0" width="21.11" height="670" fill="#1a0f06" opacity="0.09"/><rect x="147.78" y="0" width="21.11" height="670" fill="#ffe0b8" opacity="0.05"/><rect x="168.89" y="0" width="21.11" height="670" fill="#0d0703" opacity="0.08"/><line x1="21.1" y1="0" x2="21.1" y2="670" stroke="#1d1108" stroke-width="2.2" opacity=".62"/><line x1="22.7" y1="0" x2="22.7" y2="670" stroke="#b08a5c" stroke-width="1.1" opacity=".3"/><line x1="42.2" y1="0" x2="42.2" y2="670" stroke="#1d1108" stroke-width="2.2" opacity=".62"/><line x1="43.8" y1="0" x2="43.8" y2="670" stroke="#b08a5c" stroke-width="1.1" opacity=".3"/><line x1="63.3" y1="0" x2="63.3" y2="670" stroke="#1d1108" stroke-width="2.2" opacity=".62"/><line x1="64.9" y1="0" x2="64.9" y2="670" stroke="#b08a5c" stroke-width="1.1" opacity=".3"/><line x1="84.4" y1="0" x2="84.4" y2="670" stroke="#1d1108" stroke-width="2.2" opacity=".62"/><line x1="86.0" y1="0" x2="86.0" y2="670" stroke="#b08a5c" stroke-width="1.1" opacity=".3"/><line x1="105.6" y1="0" x2="105.6" y2="670" stroke="#1d1108" stroke-width="2.2" opacity=".62"/><line x1="107.2" y1="0" x2="107.2" y2="670" stroke="#b08a5c" stroke-width="1.1" opacity=".3"/><line x1="126.7" y1="0" x2="126.7" y2="670" stroke="#1d1108" stroke-width="2.2" opacity=".62"/><line x1="128.3" y1="0" x2="128.3" y2="670" stroke="#b08a5c" stroke-width="1.1" opacity=".3"/><line x1="147.8" y1="0" x2="147.8" y2="670" stroke="#1d1108" stroke-width="2.2" opacity=".62"/><line x1="149.4" y1="0" x2="149.4" y2="670" stroke="#b08a5c" stroke-width="1.1" opacity=".3"/><line x1="168.9" y1="0" x2="168.9" y2="670" stroke="#1d1108" stroke-width="2.2" opacity=".62"/><line x1="170.5" y1="0" x2="170.5" y2="670" stroke="#b08a5c" stroke-width="1.1" opacity=".3"/>
+<!-- Grain: high frequency across the boards, low along them, which is the
+     direction wood actually runs. -->
+<rect x="0" y="0" width="190" height="670" filter="url(#door-left-grain)" opacity=".42" style="mix-blend-mode:multiply"/>
+<!-- The light comes from the head of the arch; the foot sits in shadow. -->
+<rect x="0" y="0" width="190" height="670" fill="url(#door-left-fall)"/>
 
 <!-- The arched frame the boards are set into. -->
 <path d="M10 670 V192 A180 180 0 0 1 190 12" stroke="#2b1d12" stroke-width="7" fill="none" opacity=".65"/>
@@ -1558,6 +1572,15 @@
 <linearGradient id="door-right-gold" x1="0" y1="0" x2="0.6" y2="1">
 <stop offset="0%" stop-color="#eed7a0"/><stop offset="50%" stop-color="#c9a768"/><stop offset="100%" stop-color="#8f7240"/>
 </linearGradient>
+<filter id="door-right-grain" x="0" y="0" width="100%" height="100%">
+<feTurbulence type="fractalNoise" baseFrequency="0.85 0.014" numOctaves="4" seed="19"/>
+<feColorMatrix type="saturate" values="0"/>
+</filter>
+<linearGradient id="door-right-fall" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="#fff2d8" stop-opacity=".16"/>
+<stop offset="42%" stop-color="#000000" stop-opacity="0"/>
+<stop offset="100%" stop-color="#100a04" stop-opacity=".42"/>
+</linearGradient>
 <linearGradient id="door-right-shade" x1="0" y1="0" x2="1" y2="0">
 <stop offset="0%" stop-color="#120c07" stop-opacity=".3"/><stop offset="16%" stop-color="#120c07" stop-opacity="0"/>
 <stop offset="80%" stop-color="#120c07" stop-opacity="0"/><stop offset="100%" stop-color="#120c07" stop-opacity=".5"/>
@@ -1565,7 +1588,12 @@
 </defs>
 <g clip-path="url(#door-right-clip)">
 <rect x="0" y="0" width="190" height="670" fill="url(#door-right-wood)"/>
-<line x1="21.1" y1="0" x2="21.1" y2="670" stroke="#2b1d12" stroke-width="1.6" opacity=".55"/><line x1="22.5" y1="0" x2="22.5" y2="670" stroke="#8a6a45" stroke-width="1" opacity=".28"/><line x1="42.2" y1="0" x2="42.2" y2="670" stroke="#2b1d12" stroke-width="1.6" opacity=".55"/><line x1="43.6" y1="0" x2="43.6" y2="670" stroke="#8a6a45" stroke-width="1" opacity=".28"/><line x1="63.3" y1="0" x2="63.3" y2="670" stroke="#2b1d12" stroke-width="1.6" opacity=".55"/><line x1="64.7" y1="0" x2="64.7" y2="670" stroke="#8a6a45" stroke-width="1" opacity=".28"/><line x1="84.4" y1="0" x2="84.4" y2="670" stroke="#2b1d12" stroke-width="1.6" opacity=".55"/><line x1="85.8" y1="0" x2="85.8" y2="670" stroke="#8a6a45" stroke-width="1" opacity=".28"/><line x1="105.6" y1="0" x2="105.6" y2="670" stroke="#2b1d12" stroke-width="1.6" opacity=".55"/><line x1="107.0" y1="0" x2="107.0" y2="670" stroke="#8a6a45" stroke-width="1" opacity=".28"/><line x1="126.7" y1="0" x2="126.7" y2="670" stroke="#2b1d12" stroke-width="1.6" opacity=".55"/><line x1="128.1" y1="0" x2="128.1" y2="670" stroke="#8a6a45" stroke-width="1" opacity=".28"/><line x1="147.8" y1="0" x2="147.8" y2="670" stroke="#2b1d12" stroke-width="1.6" opacity=".55"/><line x1="149.2" y1="0" x2="149.2" y2="670" stroke="#8a6a45" stroke-width="1" opacity=".28"/><line x1="168.9" y1="0" x2="168.9" y2="670" stroke="#2b1d12" stroke-width="1.6" opacity=".55"/><line x1="170.3" y1="0" x2="170.3" y2="670" stroke="#8a6a45" stroke-width="1" opacity=".28"/>
+<rect x="21.11" y="0" width="21.11" height="670" fill="#1a0f06" opacity="0.13"/><rect x="42.22" y="0" width="21.11" height="670" fill="#ffe6c4" opacity="0.06"/><rect x="63.33" y="0" width="21.11" height="670" fill="#0d0703" opacity="0.12"/><rect x="84.44" y="0" width="21.11" height="670" fill="#ffe6c4" opacity="0.09"/><rect x="126.67" y="0" width="21.11" height="670" fill="#1a0f06" opacity="0.09"/><rect x="147.78" y="0" width="21.11" height="670" fill="#ffe0b8" opacity="0.05"/><rect x="168.89" y="0" width="21.11" height="670" fill="#0d0703" opacity="0.08"/><line x1="21.1" y1="0" x2="21.1" y2="670" stroke="#1d1108" stroke-width="2.2" opacity=".62"/><line x1="22.7" y1="0" x2="22.7" y2="670" stroke="#b08a5c" stroke-width="1.1" opacity=".3"/><line x1="42.2" y1="0" x2="42.2" y2="670" stroke="#1d1108" stroke-width="2.2" opacity=".62"/><line x1="43.8" y1="0" x2="43.8" y2="670" stroke="#b08a5c" stroke-width="1.1" opacity=".3"/><line x1="63.3" y1="0" x2="63.3" y2="670" stroke="#1d1108" stroke-width="2.2" opacity=".62"/><line x1="64.9" y1="0" x2="64.9" y2="670" stroke="#b08a5c" stroke-width="1.1" opacity=".3"/><line x1="84.4" y1="0" x2="84.4" y2="670" stroke="#1d1108" stroke-width="2.2" opacity=".62"/><line x1="86.0" y1="0" x2="86.0" y2="670" stroke="#b08a5c" stroke-width="1.1" opacity=".3"/><line x1="105.6" y1="0" x2="105.6" y2="670" stroke="#1d1108" stroke-width="2.2" opacity=".62"/><line x1="107.2" y1="0" x2="107.2" y2="670" stroke="#b08a5c" stroke-width="1.1" opacity=".3"/><line x1="126.7" y1="0" x2="126.7" y2="670" stroke="#1d1108" stroke-width="2.2" opacity=".62"/><line x1="128.3" y1="0" x2="128.3" y2="670" stroke="#b08a5c" stroke-width="1.1" opacity=".3"/><line x1="147.8" y1="0" x2="147.8" y2="670" stroke="#1d1108" stroke-width="2.2" opacity=".62"/><line x1="149.4" y1="0" x2="149.4" y2="670" stroke="#b08a5c" stroke-width="1.1" opacity=".3"/><line x1="168.9" y1="0" x2="168.9" y2="670" stroke="#1d1108" stroke-width="2.2" opacity=".62"/><line x1="170.5" y1="0" x2="170.5" y2="670" stroke="#b08a5c" stroke-width="1.1" opacity=".3"/>
+<!-- Grain: high frequency across the boards, low along them, which is the
+     direction wood actually runs. -->
+<rect x="0" y="0" width="190" height="670" filter="url(#door-right-grain)" opacity=".42" style="mix-blend-mode:multiply"/>
+<!-- The light comes from the head of the arch; the foot sits in shadow. -->
+<rect x="0" y="0" width="190" height="670" fill="url(#door-right-fall)"/>
 
 <!-- The arched frame the boards are set into. -->
 <path d="M10 670 V192 A180 180 0 0 1 190 12" stroke="#2b1d12" stroke-width="7" fill="none" opacity=".65"/>

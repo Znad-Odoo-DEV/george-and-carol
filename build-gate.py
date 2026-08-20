@@ -36,11 +36,22 @@ def leaf(side):
     #    it, which is what reads as a plank rather than a stripe.
     boards = []
     board_w = 190 / 9
+    # Each board a shade off its neighbour, the way a batch of sawn timber is.
+    tints = [(None, 0), ('#1a0f06', .13), ('#ffe6c4', .06), ('#0d0703', .12),
+             ('#ffe6c4', .09), (None, 0), ('#1a0f06', .09), ('#ffe0b8', .05),
+             ('#0d0703', .08)]
+    for k, (colour, alpha) in enumerate(tints):
+        if not colour:
+            continue
+        boards.append(
+            f'<rect x="{k * board_w:.2f}" y="0" width="{board_w:.2f}" height="670" '
+            f'fill="{colour}" opacity="{alpha}"/>'
+        )
     for k in range(1, 9):
         x = k * board_w
         boards.append(
-            f'<line x1="{x:.1f}" y1="0" x2="{x:.1f}" y2="670" stroke="#2b1d12" stroke-width="1.6" opacity=".55"/>'
-            f'<line x1="{x + 1.4:.1f}" y1="0" x2="{x + 1.4:.1f}" y2="670" stroke="#8a6a45" stroke-width="1" opacity=".28"/>'
+            f'<line x1="{x:.1f}" y1="0" x2="{x:.1f}" y2="670" stroke="#1d1108" stroke-width="2.2" opacity=".62"/>'
+            f'<line x1="{x + 1.6:.1f}" y1="0" x2="{x + 1.6:.1f}" y2="670" stroke="#b08a5c" stroke-width="1.1" opacity=".3"/>'
         )
 
     # ── Iron straps. Two bands with a spade end, studded along their length.
@@ -80,6 +91,15 @@ def leaf(side):
 <linearGradient id="{i('gold')}" x1="0" y1="0" x2="0.6" y2="1">
 <stop offset="0%" stop-color="#eed7a0"/><stop offset="50%" stop-color="#c9a768"/><stop offset="100%" stop-color="#8f7240"/>
 </linearGradient>
+<filter id="{i('grain')}" x="0" y="0" width="100%" height="100%">
+<feTurbulence type="fractalNoise" baseFrequency="0.85 0.014" numOctaves="4" seed="{7 if side == 'left' else 19}"/>
+<feColorMatrix type="saturate" values="0"/>
+</filter>
+<linearGradient id="{i('fall')}" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="#fff2d8" stop-opacity=".16"/>
+<stop offset="42%" stop-color="#000000" stop-opacity="0"/>
+<stop offset="100%" stop-color="#100a04" stop-opacity=".42"/>
+</linearGradient>
 <linearGradient id="{i('shade')}" x1="0" y1="0" x2="1" y2="0">
 <stop offset="0%" stop-color="#120c07" stop-opacity=".3"/><stop offset="16%" stop-color="#120c07" stop-opacity="0"/>
 <stop offset="80%" stop-color="#120c07" stop-opacity="0"/><stop offset="100%" stop-color="#120c07" stop-opacity=".5"/>
@@ -88,6 +108,11 @@ def leaf(side):
 <g clip-path="url(#{i('clip')})">
 <rect x="0" y="0" width="190" height="670" fill="url(#{i('wood')})"/>
 {''.join(boards)}
+<!-- Grain: high frequency across the boards, low along them, which is the
+     direction wood actually runs. -->
+<rect x="0" y="0" width="190" height="670" filter="url(#{i('grain')})" opacity=".42" style="mix-blend-mode:multiply"/>
+<!-- The light comes from the head of the arch; the foot sits in shadow. -->
+<rect x="0" y="0" width="190" height="670" fill="url(#{i('fall')})"/>
 
 <!-- The arched frame the boards are set into. -->
 <path d="M10 670 V192 A180 180 0 0 1 190 12" stroke="#2b1d12" stroke-width="7" fill="none" opacity=".65"/>

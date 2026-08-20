@@ -942,6 +942,25 @@
       }
 
       .dots button[aria-current='true'] { width: 16px; opacity: 1; }
+
+      /* The bar inside the active dot runs down its hold, so the guest can
+         see the invitation is moving on its own and roughly when. */
+      .dots button { position: relative; overflow: hidden; }
+
+      .dots button::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: var(--gold-shadow);
+        transform: scaleX(0);
+        transform-origin: right;   /* RTL: it fills the way the page reads */
+      }
+
+      .dots button[data-timing]::after {
+        animation: dot-fill var(--hold, 5500ms) linear forwards;
+      }
+
+      @keyframes dot-fill { to { transform: scaleX(1); } }
       .dots button:focus-visible { outline: 1px solid var(--gold); outline-offset: 3px; }
 
       /* Told once, on Scene 1, and never again. */
@@ -1029,6 +1048,7 @@
         .photo img { animation: none !important; }
         .seal-hint { animation: none !important; opacity: 0.5 !important; }
         .swipe-hint[data-show] { animation: none !important; }
+        .dots button[data-timing]::after { animation: none !important; }
         .card { transition-duration: 400ms !important; }
         #loader svg { animation: none !important; }
       }
@@ -1352,7 +1372,16 @@
 
       const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
       const params = new URLSearchParams(location.search)
-      let autoplay = params.get('autoplay') === '1'
+      const autoParam = params.get('autoplay')
+
+      /* On by default: the invitation plays itself, and the guest only has to
+         watch. `?autoplay=0` hands it back to them entirely.               */
+      let autoplay = autoParam !== '0'
+
+      /* The seal still waits to be pressed. That press is the whole point of
+         an envelope, and spending it on a timer wastes the best moment in the
+         piece — so hands-free-from-the-very-start is opt-in, for recording.  */
+      const autoOpen = autoParam === '1'
 
       let current = 0
       let locked = false
@@ -1466,6 +1495,7 @@
 
       function armSwipeHint() {
         if (hintUsed || reduced) return
+        if (autoplay) return   // it is already moving; do not ask for a swipe
         clearTimeout(hintTimer)
         hintTimer = setTimeout(() => {
           if (current === 1 && !hintUsed) swipeHint.setAttribute('data-show', '')
@@ -1490,7 +1520,14 @@
         clearTimeout(autoTimer)
         if (!autoplay) return
         const hold = HOLD[current]
-        if (!isFinite(hold)) return
+        // The finale holds forever, so no dot should be left mid-fill.
+        if (!isFinite(hold)) {
+          dots.forEach((d) => d.removeAttribute('data-timing'))
+          return
+        }
+        if (current === 0 && !autoOpen) return   // the seal waits for a hand
+
+        paintDotTimer(hold)
         autoTimer = setTimeout(() => {
           if (current === 0) openEnvelope()
           else go(current + 1)
@@ -1500,6 +1537,18 @@
       function cancelAutoplay(alsoStop = true) {
         if (alsoStop) autoplay = false
         clearTimeout(autoTimer)
+        if (alsoStop) dots.forEach((d) => d.removeAttribute('data-timing'))
+      }
+
+      /* Restarting a CSS animation needs the attribute off, a reflow, then on
+         again — otherwise the browser keeps playing the old one. */
+      function paintDotTimer(hold) {
+        dots.forEach((d) => d.removeAttribute('data-timing'))
+        const d = dots[current]
+        if (!d || !isFinite(hold)) return
+        d.style.setProperty('--hold', `${hold}ms`)
+        void d.offsetWidth
+        d.setAttribute('data-timing', '')
       }
 
       /* ── Touch: swipe, with damped live drag ───────────────────────────── */

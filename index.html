@@ -812,13 +812,22 @@
         color: var(--muted);
       }
 
+      /* One row of two, wrapping to a column where the screen is too narrow
+         to keep both pills above the 44px touch target. */
+      .wa-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 22px;
+      }
+
       .wa {
         display: inline-flex;
         align-items: center;
         justify-content: center;
         min-height: 44px;
-        margin-top: 22px;
-        padding: 0 26px;
+        padding: 0 22px;
         font-family: var(--sans);
         font-size: 12px;
         word-spacing: 0.18em;
@@ -1257,7 +1266,7 @@
             </svg>
           </p>
 
-          <p class="rsvp-note" data-in style="--i: 4">الرجاء تأكيد الحضور قبل ٠٨ / ٠٩ / ٢٠٢٦</p>
+          <p class="rsvp-note" data-in style="--i: 4">للاعتذار قبل ٠٨ / ٠٩ / ٢٠٢٦</p>
 
           <p class="rsvp-contacts" data-in style="--i: 5">
             جورج &nbsp;·&nbsp;
@@ -1269,16 +1278,26 @@
 
           <p class="rsvp-count" data-in style="--i: 6">عدد الأشخاص: (&nbsp;&nbsp;&nbsp;&nbsp;)</p>
 
-          <a
-            class="wa"
-            data-in
-            style="--i: 7"
-            data-interactive
-            href="https://wa.me/963993988073?text=%D8%A3%D9%87%D9%84%D8%A7%D9%8B%20%D8%AC%D9%88%D8%B1%D8%AC%D8%8C%20%D8%A3%D8%A4%D9%83%D8%AF%20%D8%AD%D8%B6%D9%88%D8%B1%D9%8A%20%D9%81%D9%8A%20%D8%AD%D9%81%D9%84%20%D8%B2%D9%81%D8%A7%D9%81%D9%83%D9%85%D8%A7%20%E2%80%94%20%D8%B9%D8%AF%D8%AF%20%D8%A7%D9%84%D8%A3%D8%B4%D8%AE%D8%A7%D8%B5%3A%20"
-            target="_blank"
-            rel="noopener"
-            >تأكيد الحضور عبر واتساب</a
-          >
+          <div class="wa-row" data-in style="--i: 7">
+            <a
+              class="wa"
+              data-interactive
+              href="https://wa.me/963993988073?text=%D8%A3%D9%87%D9%84%D8%A7%D9%8B%20%D8%AC%D9%88%D8%B1%D8%AC%D8%8C%20%D9%86%D8%B9%D8%AA%D8%B0%D8%B1%20%D8%B9%D9%86%20%D8%B9%D8%AF%D9%85%20%D8%AA%D9%85%D9%83%D9%91%D9%86%D9%86%D8%A7%20%D9%85%D9%86%20%D8%AD%D8%B6%D9%88%D8%B1%20%D8%AD%D9%81%D9%84%D9%83%D9%85%D8%A7.%20%D8%A3%D9%84%D9%81%20%D9%85%D8%A8%D8%B1%D9%88%D9%83%D8%8C%20%D9%88%D9%83%D9%84%20%D8%A7%D9%84%D8%AA%D9%88%D9%81%D9%8A%D9%82%20%D9%84%D9%83%D9%85%D8%A7."
+              target="_blank"
+              rel="noopener"
+              aria-label="اعتذار عبر واتساب إلى جورج"
+              >اعتذار — جورج</a
+            >
+            <a
+              class="wa"
+              data-interactive
+              href="https://wa.me/963981330436?text=%D8%A3%D9%87%D9%84%D8%A7%D9%8B%20%D9%83%D8%A7%D8%B1%D9%88%D9%84%D8%8C%20%D9%86%D8%B9%D8%AA%D8%B0%D8%B1%20%D8%B9%D9%86%20%D8%B9%D8%AF%D9%85%20%D8%AA%D9%85%D9%83%D9%91%D9%86%D9%86%D8%A7%20%D9%85%D9%86%20%D8%AD%D8%B6%D9%88%D8%B1%20%D8%AD%D9%81%D9%84%D9%83%D9%85%D8%A7.%20%D8%A3%D9%84%D9%81%20%D9%85%D8%A8%D8%B1%D9%88%D9%83%D8%8C%20%D9%88%D9%83%D9%84%20%D8%A7%D9%84%D8%AA%D9%88%D9%81%D9%8A%D9%82%20%D9%84%D9%83%D9%85%D8%A7."
+              target="_blank"
+              rel="noopener"
+              aria-label="اعتذار عبر واتساب إلى كارول"
+              >اعتذار — كارول</a
+            >
+          </div>
         </div>
       </section>
 

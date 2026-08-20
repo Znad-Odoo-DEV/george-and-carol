@@ -252,27 +252,34 @@ def garland():
         state[0] = x & 0xFFFFFFFF
         return state[0] / 4294967296
 
+    # Fitted to the photographed doorway, not to a drawn one. In the 600 x 900
+    # stage the opening spans x 123..477, y 115..785, and its arch is a true
+    # semicircle springing at y 292.5 with radius 177 -- so the garland rides
+    # just outside that, at 196.
+    ARCH_CX, ARCH_CY, ARCH_R = 300.0, 292.5, 196.0
+    JAMB_L, JAMB_R, JAMB_TOP, JAMB_RUN = 118.0, 482.0, 292.0, 490.0
+
     blossoms = []
     arch_count = 300
     for k in range(arch_count):
         t = k / (arch_count - 1)
         ang = math.pi * (1.02 + t * 0.96)
         spread = 26 + math.sin(t * math.pi) * 22
-        r = 208 + (rnd() - 0.5) * spread
-        blossoms.append((300 + math.cos(ang) * r, 380 + math.sin(ang) * r * 0.98,
+        r = ARCH_R + (rnd() - 0.5) * spread
+        blossoms.append((ARCH_CX + math.cos(ang) * r, ARCH_CY + math.sin(ang) * r * 0.98,
                          1.3 + rnd() * 3.6, int(rnd() * len(tones)), t * 700 + rnd() * 260))
 
     def cascade(x, count, spread, offset):
         for k in range(count):
             t = k / (count - 1)
             blossoms.append((x + (rnd() - 0.5) * spread + math.sin(t * 5 + offset) * 14,
-                             380 + t * 430,
+                             JAMB_TOP + t * JAMB_RUN,
                              1.4 + rnd() * 4.2 * (1 - t * 0.3),
                              int(rnd() * len(tones)),
                              500 + t * 620 + rnd() * 220))
 
-    cascade(92, 175, 58, 0)
-    cascade(508, 110, 46, 2.1)
+    cascade(JAMB_L, 175, 58, 0)
+    cascade(JAMB_R, 110, 46, 2.1)
 
     parts = []
     for x, y, r, tone, delay in blossoms:

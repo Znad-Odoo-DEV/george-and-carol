@@ -1,0 +1,1614 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+
+    <title>جورج و كارول — دعوة زفاف</title>
+    <meta name="description" content="يتشرفان بدعوتكم لحضور إكليلهما — الأحد ٢٠ / ٩ / ٢٠٢٦، كنيسة رقاد السيدة العذراء للروم الأرثوذكس، طرطوس." />
+    <meta name="theme-color" content="#FBF8F3" />
+    <!-- The page carries the couple's personal phone numbers. It is meant to be
+         passed hand to hand, not found in a search engine. -->
+    <meta name="robots" content="noindex, nofollow" />
+
+    <!-- Open Graph. WhatsApp reads these before any script runs, so the URL and
+         the image path must be absolute once this is hosted. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ar_SY" />
+    <meta property="og:title" content="جورج و كارول — دعوة زفاف" />
+    <meta property="og:description" content="الأحد ٢٠ / ٩ / ٢٠٢٦ — كنيسة رقاد السيدة العذراء للروم الأرثوذكس، طرطوس" />
+    <meta property="og:image" content="assets/cover.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Almarai:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Great+Vibes&display=swap"
+    />
+
+    <style>
+      /* ══════════════════════════════════════════════════════════════════════
+         GEORGE & CAROL — 20.09.2026
+         A six-scene invitation in one file.
+
+         The four numbers measured off the reference keyframes live at the top
+         of :root. Tune the design by changing those, not by hunting through
+         the rules that use them.
+         ═════════════════════════════════════════════════════════════════════ */
+
+      :root {
+        /* ── Measured from the reference frames ──────────────────────────
+           1. Reveal angle, frames 02–04. The written brief said ~15°, but the
+              frames clearly show a steeper edge; the frames are ground truth.
+              `--rise` is that angle expressed as the vertical drop the edge
+              makes across the full width — which is what clip-path needs.
+           2. Seal diameter, frame 01.
+           3. Cover panel height and its own, shallower, edge, frame 05.
+           4. Timeline rhythm, frame 08.
+           ---------------------------------------------------------------- */
+        --reveal-angle: 32deg;
+        --rise: 28.5%;            /* tan(32°) × card width, as % of card height */
+        --seal-size: clamp(92px, 28vw, 132px);
+        --panel-height: 45svh;
+        --panel-rise: 8%;         /* the cover panel's edge, ~11° — deliberately
+                                     shallower than the reveal: a full 32° cut
+                                     across type is unreadable */
+        --node-gap: 11.5svh;
+
+        /* ── Palette. Nothing outside this list appears anywhere. ───────── */
+        --ivory: #fbf8f3;
+        --offwhite: #f4efe7;
+        --kraft: #d9c4a9;
+        --gold: #c9a227;
+        --gold-light: #e8cf8b;
+        --gold-shadow: #a8801a;
+        --ink: #2e2a26;
+        --body: #7a6f60;
+        --muted: #9a8e7c;
+        --envelope-black: #1a1614;
+
+        /* ── Type ─────────────────────────────────────────────────────────
+           Arabic is a joined script. `letter-spacing` pulls those joins
+           apart and is never applied to it — `--air` (word-spacing) does the
+           work of opening small Arabic text instead. Tracking is reserved
+           for Latin, where it belongs.
+           ---------------------------------------------------------------- */
+        --display: 'Aref Ruqaa', 'Amiri', Georgia, serif;
+        --sans: 'Almarai', system-ui, sans-serif;
+        --latin: 'Cormorant Garamond', Georgia, serif;
+        --script: 'Great Vibes', cursive;
+        --air: 0.28em;
+
+        /* ── Motion ───────────────────────────────────────────────────── */
+        --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+        --ease-scene: cubic-bezier(0.4, 0, 0.2, 1);
+        --scene-ms: 700ms;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        overflow: hidden;              /* the deck never scrolls */
+        background: var(--ivory);
+        color: var(--ink);
+        font-family: var(--sans);
+        font-weight: 300;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        overscroll-behavior: none;
+      }
+
+      h1, h2, h3, p, figure { margin: 0; }
+      img { display: block; max-width: 100%; }
+
+      /* Latin fragments inside Arabic text need their own direction, or the
+         bidi algorithm reorders them. */
+      .ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+
+      /* ── The deck ─────────────────────────────────────────────────────── */
+
+      #deck {
+        position: fixed;
+        inset: 0;
+        overflow: hidden;
+      }
+
+      .scene {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        visibility: hidden;
+        transform: scale(0.98);
+        transition:
+          opacity var(--scene-ms) var(--ease-scene),
+          transform var(--scene-ms) var(--ease-scene),
+          visibility var(--scene-ms);
+        will-change: opacity, transform;
+      }
+
+      .scene[data-active] {
+        opacity: 1;
+        visibility: visible;
+        transform: scale(1);
+      }
+
+      /* Outgoing drifts toward the viewer while the incoming settles back.
+         The two scales moving in opposite directions is what reads as depth
+         rather than as a plain fade. */
+      .scene[data-leaving] {
+        opacity: 0;
+        visibility: visible;
+        transform: scale(1.03);
+      }
+
+      .scene[data-leaving='back'] { transform: scale(0.98); }
+      .scene[data-entering='back'] { transform: scale(1.03); }
+
+      /* While a finger is dragging, the deck follows it — heavily damped. */
+      #deck[data-dragging] .scene[data-active] { transition: none; }
+
+      /* ══════════════════════════════════════════════════════════════════
+         SCENE 0 — THE ENVELOPE
+         ═════════════════════════════════════════════════════════════════ */
+
+      #scene-0 {
+        /* The studio surface the envelope lies on. */
+        background:
+          radial-gradient(120% 80% at 72% 6%, #efe6d6 0%, var(--offwhite) 46%, #e6dccb 100%);
+      }
+
+      /* Out-of-focus pampas in the top corner. SUBSTITUTE: replaced the moment
+         assets/pampas.png loads — see .pampas img below. */
+      .pampas {
+        position: absolute;
+        z-index: 7;
+        top: -14%;
+        right: -14%;
+        width: 66%;
+        opacity: .5;
+        aspect-ratio: 1;
+        pointer-events: none;
+        filter: blur(5px);
+        background:
+          radial-gradient(38% 26% at 62% 30%, #efe3cd 0%, rgba(239,227,205,0) 70%),
+          radial-gradient(30% 22% at 44% 46%, #e5d6ba 0%, rgba(229,214,186,0) 72%),
+          radial-gradient(34% 20% at 74% 56%, #f2e9d8 0%, rgba(242,233,216,0) 74%),
+          radial-gradient(26% 18% at 52% 18%, #e9dcc2 0%, rgba(233,220,194,0) 72%);
+      }
+
+      .pampas img { width: 100%; height: 100%; object-fit: contain; }
+
+      .envelope {
+        position: absolute;
+        inset: 0;
+        filter: drop-shadow(0 24px 40px rgba(84, 62, 34, 0.22));
+      }
+
+      /* Kraft body. The fibre is one feTurbulence tile, multiplied in. */
+      .env-body {
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(152deg, rgba(255,250,238,.5) 0%, rgba(255,250,238,0) 40%),
+          radial-gradient(120% 90% at 26% 12%, #e8d4b7 0%, var(--kraft) 54%, #bda183 100%);
+      }
+
+      .env-body::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        opacity: 0.78;
+        mix-blend-mode: multiply;
+        background-size: 116px 116px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23f)' opacity='.55'/%3E%3C/svg%3E");
+      }
+
+      /* The black inner flap: a triangle from the top edge, apex at centre. */
+      .env-flap {
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        clip-path: polygon(0 0, 100% 0, 50% 50%);
+        background:
+          linear-gradient(168deg, #3a352d 0%, var(--envelope-black) 62%, #100e0b 100%);
+        /* The contact shadow it drops on whatever is beneath. */
+        filter: drop-shadow(0 4px 10px rgba(26, 22, 20, 0.45));
+      }
+
+      /* The kraft pocket: a V rising from the bottom edge. It sits above the
+         card, which is what makes the card read as coming out from inside. */
+      .env-pocket {
+        position: absolute;
+        inset: 0;
+        z-index: 4;
+        clip-path: polygon(0 100%, 100% 100%, 50% 46%);
+        background:
+          linear-gradient(200deg, #e2cdb0 0%, var(--kraft) 48%, #b79b7c 100%);
+        filter: drop-shadow(0 -3px 9px rgba(120, 92, 54, 0.28));
+      }
+
+      .env-pocket::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        clip-path: inherit;
+        opacity: 0.6;
+        mix-blend-mode: multiply;
+        background-size: 116px 116px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23f)' opacity='.55'/%3E%3C/svg%3E");
+      }
+
+      /* ── The card that slides out ─────────────────────────────────────── */
+
+      .card {
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        /* Hidden: the sweep line sits below the frame entirely. */
+        clip-path: polygon(0 calc(100% + var(--rise)), 100% 100%, 100% 200%, 0 200%);
+        transform: translate(6%, 10%);
+        transition:
+          clip-path 2450ms var(--ease) 350ms,
+          transform 2450ms var(--ease) 350ms;
+        will-change: clip-path, transform;
+      }
+
+      #scene-0[data-opening] .card {
+        clip-path: polygon(0 calc(-20% + var(--rise)), 100% -20%, 100% 200%, 0 200%);
+        transform: translate(0, 0);
+      }
+
+      /* The card face: the cover photograph, which is also Scene 1's photo, so
+         the hand-off between them is invisible. */
+      .card-face {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(168deg, #fdfbf7 0%, var(--offwhite) 60%, #e7ddcd 100%);
+        overflow: hidden;
+      }
+
+      .card-face img,
+      .photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .card-face img { filter: grayscale(1) contrast(1.06); }
+
+      /* The crisp cut edge of the paper, riding the same diagonal. */
+      .card-edge {
+        position: absolute;
+        inset: 0;
+        z-index: 4;
+        pointer-events: none;
+        background: linear-gradient(
+          calc(90deg + var(--reveal-angle)),
+          rgba(255, 255, 255, 0) 49.4%,
+          rgba(255, 253, 248, 0.95) 49.7%,
+          rgba(255, 253, 248, 0.95) 50.3%,
+          rgba(255, 255, 255, 0) 50.6%
+        );
+        clip-path: inherit;
+        opacity: 0;
+      }
+
+      /* One gold sweep across the card once everything has settled. */
+      .card-shimmer {
+        position: absolute;
+        inset: 0;
+        z-index: 5;
+        pointer-events: none;
+        opacity: 0;
+        background: linear-gradient(
+          45deg,
+          rgba(232, 207, 139, 0) 38%,
+          rgba(232, 207, 139, 0.5) 50%,
+          rgba(232, 207, 139, 0) 62%
+        );
+        background-size: 260% 260%;
+      }
+
+      #scene-0[data-opening] .card-shimmer {
+        animation: shimmer 900ms ease-out 3200ms both;
+      }
+
+      @keyframes shimmer {
+        from { opacity: 0.18; background-position: 120% 120%; }
+        to   { opacity: 0;    background-position: -40% -40%; }
+      }
+
+      /* ── The wax seal ─────────────────────────────────────────────────────
+         Pinned dead centre, above the card, and it NEVER moves. The card
+         slides out from underneath it. This is the signature of the whole
+         piece — the only transform it ever takes is the press on tap.
+         ------------------------------------------------------------------ */
+
+      .seal {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        z-index: 6;
+        width: var(--seal-size);
+        height: var(--seal-size);
+        margin: calc(var(--seal-size) / -2) 0 0 calc(var(--seal-size) / -2);
+        padding: 0;
+        border: 0;
+        background: none;
+        cursor: pointer;
+        filter: drop-shadow(0 6px 12px rgba(60, 42, 20, 0.45));
+      }
+
+      .seal svg { width: 100%; height: 100%; }
+
+      #scene-0[data-opening] .seal {
+        animation: seal-press 350ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      }
+
+      @keyframes seal-press {
+        0%   { transform: scale(1); }
+        40%  { transform: scale(0.94); }
+        70%  { transform: scale(1.02); }
+        100% { transform: scale(1); }
+      }
+
+      .seal-hint {
+        position: absolute;
+        top: calc(50% + var(--seal-size) * 0.62);
+        left: 0;
+        right: 0;
+        z-index: 6;
+        text-align: center;
+        font-size: 11px;
+        word-spacing: var(--air);
+        color: var(--offwhite);
+        text-shadow: 0 1px 6px rgba(26, 22, 20, 0.7);
+        opacity: 0;
+        animation: hint-in 600ms var(--ease) 1200ms forwards, breathe 2s ease-in-out 1800ms infinite;
+      }
+
+      @keyframes hint-in { to { opacity: 0.5; } }
+      @keyframes breathe {
+        0%, 100% { transform: translateY(0); }
+        50%      { transform: translateY(-4px); }
+      }
+
+      #scene-0[data-opening] .seal-hint {
+        animation: none;
+        opacity: 0;
+        transition: opacity 250ms ease;
+      }
+
+      /* ══════════════════════════════════════════════════════════════════
+         SHARED — photo layers, ornaments, content rhythm
+         ═════════════════════════════════════════════════════════════════ */
+
+      .photo {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        /* SUBSTITUTE: shows through wherever a photo is missing. */
+        background: radial-gradient(120% 90% at 50% 30%, #ded5c8 0%, #c9bfb0 60%, #a89d8d 100%);
+      }
+
+      .photo img { animation: ken 9s ease-in-out infinite alternate; }
+      .photo--bw img { filter: grayscale(1) contrast(1.06); }
+
+      @keyframes ken {
+        from { transform: scale(1.0); }
+        to   { transform: scale(1.07); }
+      }
+
+      .photo::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(78% 62% at 50% 42%, rgba(0,0,0,0) 40%, rgba(26,22,20,0.34) 100%);
+      }
+
+      /* The rose macro behind scenes 2–4. */
+      .roses {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        background: linear-gradient(180deg, var(--ivory) 0%, var(--offwhite) 100%);
+      }
+
+      .roses img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.35;
+        filter: blur(1.5px) saturate(0.3) brightness(1.12);
+      }
+
+      /* Corner ornament: pampas plus the two rings. */
+      .ornament {
+        position: absolute;
+        z-index: 2;
+        width: 46%;
+        max-width: 220px;
+        pointer-events: none;
+      }
+
+      /* Physical sides on purpose: these are pictorial, and `inset-inline`
+         would flip them under the right-aligned heading in RTL. */
+      .ornament--tl { top: 1.5%; left: -6%; }
+      .ornament--br { bottom: 4%; right: -6%; }
+      .ornament svg { width: 100%; height: auto; }
+
+      /* ── Content entrance ─────────────────────────────────────────────────
+         The scene arrives, then 150ms of stillness, then the content moves.
+         That pause is what lets the eye land. `--i` is the stagger index.
+         ------------------------------------------------------------------ */
+
+      [data-in] {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+
+      .scene[data-active] [data-in] {
+        animation: rise-in 500ms var(--ease) calc(850ms + var(--i, 0) * 190ms) forwards;
+      }
+
+      /* Going backwards, content the guest has already read is simply there. */
+      .scene[data-active][data-instant] [data-in] {
+        animation: none;
+        opacity: 1;
+        transform: none;
+      }
+
+      @keyframes rise-in {
+        to { opacity: 1; transform: none; }
+      }
+
+      /* ── Type ─────────────────────────────────────────────────────────── */
+
+      .eyebrow {
+        font-size: 10px;
+        font-weight: 400;
+        word-spacing: 0.35em;
+        color: var(--muted);
+      }
+
+      .names {
+        font-family: var(--display);
+        font-size: clamp(34px, 11vw, 46px);
+        font-weight: 400;
+        line-height: 1.5;
+        color: var(--ink);
+      }
+
+      .rule {
+        width: 60px;
+        height: 1px;
+        margin: 14px auto;
+        background: var(--gold);
+        opacity: 0.75;
+      }
+
+      .verse {
+        font-family: var(--display);
+        font-size: 12px;
+        line-height: 2;
+        color: var(--muted);
+      }
+
+      .verse span { display: block; font-size: 10px; opacity: 0.85; margin-top: 4px; }
+
+      .heading {
+        font-family: var(--display);
+        font-size: clamp(30px, 8.6vw, 34px);
+        font-weight: 400;
+        line-height: 1.6;
+        color: #3a342c;
+      }
+
+      /* ══════════════════════════════════════════════════════════════════
+         SCENE 1 — COVER
+         ═════════════════════════════════════════════════════════════════ */
+
+      .cover-panel {
+        position: absolute;
+        inset-inline: 0;
+        bottom: 0;
+        z-index: 2;
+        height: var(--panel-height);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        padding: 0 26px calc(46px + env(safe-area-inset-bottom));
+        text-align: center;
+        background: rgba(255, 255, 255, 0.92);
+        -webkit-backdrop-filter: blur(6px);
+        backdrop-filter: blur(6px);
+        /* Its top edge is cut on a diagonal — shallower than the reveal, so
+           the first line of type is never clipped by it. */
+        clip-path: polygon(0 var(--panel-rise), 100% 0, 100% 100%, 0 100%);
+      }
+
+      .when {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 14px;
+        font-size: 13px;
+        word-spacing: 0.18em;
+        color: var(--ink);
+      }
+
+      .when i {
+        display: block;
+        width: 1px;
+        height: 13px;
+        background: var(--gold);
+        opacity: 0.5;
+      }
+
+      /* ══════════════════════════════════════════════════════════════════
+         SCENE 2 — THE DAY
+         ═════════════════════════════════════════════════════════════════ */
+
+      .pad {
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+        padding:
+          calc(58px + env(safe-area-inset-top))
+          26px
+          calc(70px + env(safe-area-inset-bottom));
+      }
+
+      .pad > .heading { align-self: flex-start; }
+
+      .timeline {
+        position: relative;
+        /* Sits under the heading with real air, and lets the slack fall to
+           the foot of the screen where the dots live — centring it with only
+           two events strands the list in the middle of nothing. */
+        margin-top: clamp(26px, 9svh, 74px);
+        margin-bottom: auto;
+        padding-inline-start: 52px;
+      }
+
+      /* The rule the nodes sit on. It draws downward before they arrive. */
+      .timeline-rule {
+        position: absolute;
+        inset-inline-start: 17px;
+        top: 6px;
+        bottom: 6px;
+        width: 1px;
+        background: var(--gold);
+        opacity: 0.4;
+        transform: scaleY(0);
+        transform-origin: top;
+      }
+
+      .scene[data-active] .timeline-rule {
+        animation: draw-rule 900ms var(--ease) 850ms forwards;
+      }
+
+      .scene[data-active][data-instant] .timeline-rule {
+        animation: none;
+        transform: scaleY(1);
+      }
+
+      @keyframes draw-rule { to { transform: scaleY(1); } }
+
+      .node {
+        position: relative;
+        min-height: var(--node-gap);
+        padding-bottom: clamp(14px, 4svh, 34px);
+      }
+
+      .node:last-child { padding-bottom: 0; }
+
+      .node-badge {
+        position: absolute;
+        inset-inline-start: -52px;
+        top: -3px;
+        display: grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        color: var(--gold-shadow);
+        background: var(--ivory);
+        border: 1px solid var(--gold);
+        border-radius: 50%;
+      }
+
+      .node-badge svg { width: 17px; height: 17px; }
+
+      .node-time {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--ink);
+      }
+
+      .node-title {
+        font-size: 13px;
+        font-weight: 400;
+        color: var(--ink);
+        margin-top: 2px;
+      }
+
+      .node-place {
+        font-size: 11px;
+        line-height: 1.75;
+        color: var(--muted);
+        margin-top: 3px;
+      }
+
+      /* ══════════════════════════════════════════════════════════════════
+         SCENE 3 — ALL THE DETAILS
+         ═════════════════════════════════════════════════════════════════ */
+
+      .blocks {
+        position: relative;
+        margin-top: clamp(22px, 6svh, 52px);
+        margin-bottom: auto;
+        padding-inline-start: 26px;
+      }
+
+      .blocks::before {
+        content: '';
+        position: absolute;
+        inset-inline-start: 4px;
+        top: 8px;
+        bottom: 8px;
+        width: 1px;
+        background: var(--gold);
+        opacity: 0.4;
+      }
+
+      .block { position: relative; padding-bottom: clamp(20px, 4.6svh, 34px); }
+
+      .block::before {
+        content: '';
+        position: absolute;
+        inset-inline-start: -26px;
+        top: 7px;
+        width: 9px;
+        height: 9px;
+        margin-inline-start: 0;
+        background: var(--gold);
+        border-radius: 50%;
+        transform: translateX(50%) scale(0);
+      }
+
+      .scene[data-active] .block::before {
+        animation: dot-in 420ms cubic-bezier(0.34, 1.56, 0.64, 1)
+          calc(770ms + var(--i, 0) * 190ms) forwards;
+      }
+
+      .scene[data-active][data-instant] .block::before {
+        animation: none;
+        transform: translateX(50%) scale(1);
+      }
+
+      @keyframes dot-in { to { transform: translateX(50%) scale(1); } }
+
+      .block-title {
+        font-size: 12px;
+        font-weight: 700;
+        word-spacing: 0.2em;
+        color: #3a342c;
+      }
+
+      .block-body {
+        max-width: 26em;
+        margin-top: 5px;
+        font-size: 11px;
+        line-height: 1.75;
+        color: var(--body);
+      }
+
+      /* ══════════════════════════════════════════════════════════════════
+         SCENE 4 — RSVP
+         ═════════════════════════════════════════════════════════════════ */
+
+      .rsvp-wrap {
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: calc(52px + env(safe-area-inset-top)) 34px calc(72px + env(safe-area-inset-bottom));
+        text-align: center;
+      }
+
+      /* The gold frame draws itself, one edge at a time. Four separate lines,
+         because a border cannot be drawn edge by edge. */
+      .frame i {
+        position: absolute;
+        background: var(--gold);
+        opacity: 0.55;
+      }
+
+      .frame .t, .frame .b { height: 1px; inset-inline: 26px; transform: scaleX(0); }
+      .frame .l, .frame .r { width: 1px; top: 26px; bottom: 26px; transform: scaleY(0); }
+      .frame .t { top: 26px; transform-origin: right; }
+      .frame .r { inset-inline-end: 26px; transform-origin: top; }
+      .frame .b { bottom: 26px; transform-origin: left; }
+      .frame .l { inset-inline-start: 26px; transform-origin: bottom; }
+
+      .scene[data-active] .frame i { animation: draw-edge 280ms var(--ease) forwards; }
+      .scene[data-active] .frame .t { animation-delay: 1750ms; }
+      .scene[data-active] .frame .r { animation-delay: 2020ms; }
+      .scene[data-active] .frame .b { animation-delay: 2290ms; }
+      .scene[data-active] .frame .l { animation-delay: 2560ms; }
+
+      .scene[data-active][data-instant] .frame i {
+        animation: none;
+        transform: scale(1);
+      }
+
+      @keyframes draw-edge { to { transform: scale(1); } }
+
+      .rsvp-letters {
+        font-family: var(--latin);
+        font-weight: 300;
+        font-size: clamp(76px, 27vw, 132px);
+        line-height: 0.82;
+        letter-spacing: 0.1em;   /* Latin only — safe to track */
+        color: #3a342c;
+        direction: ltr;
+        position: relative;
+      }
+
+      .rsvp-letters b { display: block; font-weight: 300; }
+
+      /* The olive sprig tucked beside the V. */
+      .sprig {
+        position: absolute;
+        inset-inline-end: -14%;
+        top: 52%;
+        width: 34%;
+        opacity: 0.9;
+      }
+
+      .rsvp-note {
+        margin-top: 30px;
+        font-size: 13px;
+        word-spacing: 0.2em;
+        color: #6e6455;
+      }
+
+      .rsvp-contacts {
+        margin-top: 16px;
+        font-size: 12px;
+        line-height: 2.1;
+        color: #6e6455;
+      }
+
+      .rsvp-contacts a {
+        color: inherit;
+        text-decoration: none;
+        border-bottom: 1px solid rgba(201, 162, 39, 0.5);
+        padding-bottom: 1px;
+      }
+
+      .rsvp-count {
+        margin-top: 14px;
+        font-size: 12px;
+        word-spacing: 0.2em;
+        color: var(--muted);
+      }
+
+      .wa {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        margin-top: 22px;
+        padding: 0 26px;
+        font-family: var(--sans);
+        font-size: 12px;
+        word-spacing: 0.18em;
+        color: #6e6455;
+        text-decoration: none;
+        background: transparent;
+        border: 1px solid var(--gold);
+        border-radius: 999px;   /* the one round shape: a pill button is not a
+                                   rounded card, and it reads as a control */
+      }
+
+      /* ══════════════════════════════════════════════════════════════════
+         SCENE 5 — FINALE
+         ═════════════════════════════════════════════════════════════════ */
+
+      .finale-names {
+        position: absolute;
+        inset-inline: 0;
+        bottom: calc(92px + env(safe-area-inset-bottom));
+        z-index: 3;
+        text-align: center;
+        font-family: var(--display);
+        font-size: clamp(30px, 9vw, 40px);
+        line-height: 1.6;
+        color: #fff;
+        text-shadow: 0 2px 18px rgba(26, 22, 20, 0.55);
+      }
+
+      .finale-line {
+        position: absolute;
+        inset-inline: 0;
+        bottom: calc(58px + env(safe-area-inset-bottom));
+        z-index: 3;
+        text-align: center;
+        font-size: 11px;
+        word-spacing: 0.2em;
+        color: rgba(255, 255, 255, 0.82);
+        text-shadow: 0 1px 10px rgba(26, 22, 20, 0.6);
+      }
+
+      .hearts {
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        pointer-events: none;
+      }
+
+      .hearts svg { position: absolute; width: 30px; height: 30px; }
+      .hearts svg:nth-child(1) { top: 16%; inset-inline-start: 12%; }
+      .hearts svg:nth-child(2) { top: 40%; inset-inline-end: 10%; width: 22px; height: 22px; }
+      .hearts svg:nth-child(3) { top: 62%; inset-inline-start: 16%; width: 18px; height: 18px; }
+
+      .hearts path {
+        fill: none;
+        stroke: #fff;
+        stroke-width: 1.5;
+        stroke-dasharray: 120;
+        stroke-dashoffset: 120;
+      }
+
+      .scene[data-active] .hearts path {
+        animation: draw-heart 600ms var(--ease) forwards;
+      }
+
+      .scene[data-active] .hearts svg:nth-child(1) path { animation-delay: 1100ms; }
+      .scene[data-active] .hearts svg:nth-child(2) path { animation-delay: 1500ms; }
+      .scene[data-active] .hearts svg:nth-child(3) path { animation-delay: 1900ms; }
+
+      .scene[data-active][data-instant] .hearts path {
+        animation: none;
+        stroke-dashoffset: 0;
+      }
+
+      @keyframes draw-heart { to { stroke-dashoffset: 0; } }
+
+      .rings-badge {
+        position: absolute;
+        inset-inline-end: 22px;
+        bottom: calc(96px + env(safe-area-inset-bottom));
+        z-index: 3;
+        display: grid;
+        place-items: center;
+        width: 64px;
+        height: 64px;
+        background: rgba(251, 248, 243, 0.94);
+        border-radius: 50%;
+      }
+
+      .rings-badge svg { width: 40px; height: auto; }
+
+      /* ══════════════════════════════════════════════════════════════════
+         CHROME — dots, hint, grain, loader
+         ═════════════════════════════════════════════════════════════════ */
+
+      .dots {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: calc(20px + env(safe-area-inset-bottom));
+        z-index: 20;
+        display: flex;
+        gap: 7px;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 400ms ease, visibility 400ms;
+      }
+
+      .dots[data-show] { opacity: 1; visibility: visible; }
+
+      .dots button {
+        width: 5px;
+        height: 5px;
+        padding: 0;
+        border: 0;
+        border-radius: 999px;
+        background: var(--gold);
+        opacity: 0.35;
+        cursor: pointer;
+        transition: width 300ms var(--ease-scene), opacity 300ms var(--ease-scene);
+      }
+
+      .dots button[aria-current='true'] { width: 16px; opacity: 1; }
+      .dots button:focus-visible { outline: 1px solid var(--gold); outline-offset: 3px; }
+
+      /* Told once, on Scene 1, and never again. */
+      .swipe-hint {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: calc(42px + env(safe-area-inset-bottom));
+        z-index: 19;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        font-size: 10px;
+        word-spacing: 0.2em;
+        color: var(--ink);
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 400ms ease, visibility 400ms;
+      }
+
+      .swipe-hint[data-show] {
+        opacity: 0.45;
+        visibility: visible;
+        animation: breathe 2s ease-in-out infinite;
+      }
+
+      .swipe-hint svg { width: 14px; height: 14px; }
+
+      /* The single detail that makes it read as print rather than screen. */
+      .grain {
+        position: fixed;
+        inset: 0;
+        z-index: 30;
+        pointer-events: none;
+        opacity: 0.035;
+        mix-blend-mode: multiply;
+        background-size: 200px 200px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23g)'/%3E%3C/svg%3E");
+      }
+
+      #loader {
+        position: fixed;
+        inset: 0;
+        z-index: 40;
+        display: grid;
+        place-items: center;
+        background: var(--ivory);
+        transition: opacity 500ms ease, visibility 500ms;
+      }
+
+      #loader[data-done] { opacity: 0; visibility: hidden; }
+
+      #loader svg { width: 42px; height: 42px; animation: spin 1.4s linear infinite; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+
+      /* ══════════════════════════════════════════════════════════════════
+         REDUCED MOTION — the invitation still tells its story, it just
+         stops moving. Nothing is hidden, nothing becomes unreachable.
+         ═════════════════════════════════════════════════════════════════ */
+
+      @media (prefers-reduced-motion: reduce) {
+        .scene {
+          transition: opacity 200ms linear, visibility 200ms;
+          transform: none !important;
+        }
+        .scene[data-leaving] { transform: none !important; }
+
+        [data-in],
+        .timeline-rule,
+        .block::before,
+        .frame i,
+        .hearts path {
+          animation: none !important;
+          opacity: 1 !important;
+          transform: none !important;
+          stroke-dashoffset: 0 !important;
+        }
+        .block::before { transform: translateX(50%) !important; }
+        .frame .t, .frame .b { transform: scaleX(1) !important; }
+        .frame .l, .frame .r { transform: scaleY(1) !important; }
+        .timeline-rule { transform: scaleY(1) !important; }
+
+        .photo img { animation: none !important; }
+        .seal-hint { animation: none !important; opacity: 0.5 !important; }
+        .swipe-hint[data-show] { animation: none !important; }
+        .card { transition-duration: 400ms !important; }
+        #loader svg { animation: none !important; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ── Loader: one gold ring, turning. No text, no percentage. ──────── -->
+    <div id="loader" role="status" aria-label="جارٍ التحميل">
+      <svg viewBox="0 0 44 44" fill="none" aria-hidden="true">
+        <circle cx="22" cy="22" r="19" stroke="#C9A227" stroke-width="1.2" stroke-dasharray="30 90" stroke-linecap="round" />
+      </svg>
+    </div>
+
+    <main id="deck">
+      <!-- ══════════════ SCENE 0 — ENVELOPE ══════════════ -->
+      <section class="scene" id="scene-0" aria-label="الظرف">
+        <div class="pampas" aria-hidden="true">
+          <!-- SWAP: real pampas replaces the gradient beneath it. -->
+          <img src="assets/pampas.png" alt="" onerror="this.remove()" />
+        </div>
+
+        <div class="envelope">
+          <span class="env-body" aria-hidden="true"></span>
+
+          <!-- The card, sliding out from under the seal. -->
+          <div class="card" aria-hidden="true">
+            <div class="card-face">
+              <img src="assets/cover.jpg" alt="" loading="eager" onerror="this.remove()" />
+            </div>
+          </div>
+          <span class="card-edge" aria-hidden="true"></span>
+          <span class="card-shimmer" aria-hidden="true"></span>
+
+          <span class="env-flap" aria-hidden="true"></span>
+          <span class="env-pocket" aria-hidden="true"></span>
+        </div>
+
+        <!-- Pinned centre, above everything, never moved. -->
+        <button class="seal" id="seal" type="button" aria-label="افتح الدعوة">
+          <svg viewBox="0 0 120 120" aria-hidden="true">
+            <defs>
+              <radialGradient id="waxRim" cx="34%" cy="28%" r="82%">
+                <stop offset="0%" stop-color="#E8CF8B" />
+                <stop offset="55%" stop-color="#C9A227" />
+                <stop offset="100%" stop-color="#A8801A" />
+              </radialGradient>
+              <radialGradient id="waxFace" cx="36%" cy="30%" r="76%">
+                <stop offset="0%" stop-color="#F0DCA2" />
+                <stop offset="50%" stop-color="#C9A227" />
+                <stop offset="100%" stop-color="#A8801A" />
+              </radialGradient>
+            </defs>
+            <!-- The poured blob. Irregular on purpose: a perfect circle reads
+                 as a sticker, not as wax. -->
+            <path fill="url(#waxRim)" d="M60 6c9 0 14 5 21 7s15-1 20 5 2 14 5 21 8 11 8 20-5 14-7 21 1 15-5 20-14 2-21 5-11 8-20 8-14-5-21-7-15 1-20-5-2-14-5-21-8-11-8-20 5-14 7-21-1-15 5-20 14-2 21-5 11-8 20-8Z" />
+            <circle cx="60" cy="60" r="41" fill="url(#waxFace)" />
+            <circle cx="60" cy="60" r="41" fill="none" stroke="#A8801A" stroke-width="1.4" opacity=".45" />
+            <circle cx="60" cy="60" r="38" fill="none" stroke="#F3E5BC" stroke-width="1" opacity=".3" />
+            <!-- The struck monogram: G ♥ C -->
+            <text x="42" y="70" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-size="34" fill="#8A6A1E" opacity=".9">G</text>
+            <text x="78" y="70" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-size="34" fill="#8A6A1E" opacity=".9">C</text>
+            <path d="M60 57c-2.4-2.6-6.4-1-6.4 2 0 2.6 3.4 4.8 6.4 7.4 3-2.6 6.4-4.8 6.4-7.4 0-3-4-4.6-6.4-2Z" fill="#8A6A1E" opacity=".9" />
+            <ellipse cx="44" cy="38" rx="15" ry="8" fill="#FDF3D9" opacity=".26" transform="rotate(-26 44 38)" />
+          </svg>
+        </button>
+
+        <p class="seal-hint" id="sealHint">اضغط لفتح الدعوة</p>
+      </section>
+
+      <!-- ══════════════ SCENE 1 — COVER ══════════════ -->
+      <section class="scene" id="scene-1" aria-label="الغلاف">
+        <div class="photo photo--bw" aria-hidden="true">
+          <img src="assets/cover.jpg" alt="" loading="eager" onerror="this.remove()" />
+        </div>
+
+        <div class="cover-panel">
+          <p class="eyebrow" data-in style="--i: 0">دعوة زفاف</p>
+
+          <h1 class="names" data-in style="--i: 1">جورج &nbsp;و&nbsp; كارول</h1>
+          <span class="rule" data-in style="--i: 2" aria-hidden="true"></span>
+
+          <p class="verse" data-in style="--i: 3">
+            عَرَّفْتُهُمُ اسْمَكَ وَسَأُعَرِّفُهُمْ
+            <span>(يوحنا ١٧: ٢٦)</span>
+          </p>
+
+          <p class="when" data-in style="--i: 4">
+            <span>الأحد</span>
+            <i aria-hidden="true"></i>
+            <span>٢٠ / ٩ / ٢٠٢٦</span>
+            <i aria-hidden="true"></i>
+            <span>٦:٠٠ مساءً</span>
+          </p>
+        </div>
+      </section>
+
+      <!-- ══════════════ SCENE 2 — THE DAY ══════════════ -->
+      <section class="scene" id="scene-2" aria-label="برنامج اليوم">
+        <div class="roses" aria-hidden="true">
+          <img src="assets/rose-bg.jpg" alt="" loading="lazy" onerror="this.remove()" />
+        </div>
+
+        <div class="ornament ornament--tl" aria-hidden="true">
+          <svg viewBox="0 0 220 190" fill="none">
+            <use href="#ornamentArt" />
+          </svg>
+        </div>
+
+        <div class="pad">
+          <h2 class="heading" data-in style="--i: 0">تفاصيل اليوم</h2>
+
+          <div class="timeline">
+            <span class="timeline-rule" aria-hidden="true"></span>
+
+            <div class="node" data-in style="--i: 1">
+              <span class="node-badge" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
+                  <path d="M12 2v5M10 4h4M5 21v-9l7-5 7 5v9M10 21v-5h4v5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+              <p class="node-time">٦:٠٠ مساءً</p>
+              <p class="node-title">إكليل الزواج</p>
+              <p class="node-place">كنيسة رقاد السيدة العذراء للروم الأرثوذكس — طرطوس</p>
+            </div>
+
+            <div class="node" data-in style="--i: 2">
+              <span class="node-badge" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
+                  <path d="M7 3v8M4.5 3v5.5a2.5 2.5 0 0 0 5 0V3M7 11v10M17.5 3c-1.8 1.2-2.5 3-2.5 5.2 0 1.8 1 2.8 2.5 2.8V21" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+              <p class="node-time">٩:٠٠ مساءً</p>
+              <p class="node-title">حفل العشاء</p>
+              <p class="node-place">مطعم <span class="ltr">Barcod — Level 8</span></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════ SCENE 3 — ALL THE DETAILS ══════════════ -->
+      <section class="scene" id="scene-3" aria-label="كل التفاصيل">
+        <div class="roses" aria-hidden="true">
+          <img src="assets/rose-bg.jpg" alt="" loading="lazy" onerror="this.remove()" />
+        </div>
+
+        <!-- Same ornament family, opposite corner — variety without novelty. -->
+        <div class="ornament ornament--br" aria-hidden="true">
+          <svg viewBox="0 0 220 190" fill="none" style="transform: scaleX(-1)">
+            <use href="#ornamentArt" />
+          </svg>
+        </div>
+
+        <div class="pad">
+          <h2 class="heading" data-in style="--i: 0">كل التفاصيل</h2>
+
+          <div class="blocks">
+            <div class="block" data-in style="--i: 1">
+              <p class="block-title">قواعد اللباس</p>
+              <p class="block-body">لباس رسمي أنيق — نرحّب بكم بألوان تليق بالمناسبة.</p>
+            </div>
+
+            <div class="block" data-in style="--i: 2">
+              <p class="block-title">المواصلات</p>
+              <p class="block-body">تتوفر مواقف للسيارات قرب الكنيسة والمطعم.</p>
+            </div>
+
+            <div class="block" data-in style="--i: 3">
+              <p class="block-title">ملاحظة</p>
+              <p class="block-body">تم تنسيق الزهور مسبقاً — التهاني في الكنيسة.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════ SCENE 4 — RSVP ══════════════ -->
+      <section class="scene" id="scene-4" aria-label="تأكيد الحضور">
+        <div class="roses" aria-hidden="true">
+          <img src="assets/rose-bg.jpg" alt="" loading="lazy" onerror="this.remove()" />
+        </div>
+
+        <div class="ornament ornament--tl" aria-hidden="true">
+          <svg viewBox="0 0 220 190" fill="none"><use href="#ornamentArt" /></svg>
+        </div>
+
+        <span class="frame" aria-hidden="true">
+          <i class="t"></i><i class="r"></i><i class="b"></i><i class="l"></i>
+        </span>
+
+        <div class="rsvp-wrap">
+          <!-- Latin letterforms, so tracking is safe here. Each arrives alone. -->
+          <p class="rsvp-letters" aria-label="تأكيد الحضور">
+            <b data-in style="--i: 0">R</b>
+            <b data-in style="--i: 1">S</b>
+            <b data-in style="--i: 2">V</b>
+            <b data-in style="--i: 3">P</b>
+            <svg class="sprig" viewBox="0 0 60 90" fill="none" aria-hidden="true">
+              <path d="M30 88V16" stroke="#C9A227" stroke-width="1.2" stroke-linecap="round" opacity=".7" />
+              <g fill="#C9A227" opacity=".65">
+                <ellipse cx="20" cy="60" rx="9" ry="5" transform="rotate(-28 20 60)" />
+                <ellipse cx="40" cy="52" rx="9" ry="5" transform="rotate(28 40 52)" />
+                <ellipse cx="21" cy="42" rx="8" ry="4.5" transform="rotate(-28 21 42)" />
+                <ellipse cx="39" cy="34" rx="8" ry="4.5" transform="rotate(28 39 34)" />
+                <ellipse cx="30" cy="20" rx="6" ry="8" />
+              </g>
+            </svg>
+          </p>
+
+          <p class="rsvp-note" data-in style="--i: 4">الرجاء تأكيد الحضور قبل ٠٨ / ٠٩ / ٢٠٢٦</p>
+
+          <p class="rsvp-contacts" data-in style="--i: 5">
+            جورج &nbsp;·&nbsp;
+            <a href="tel:+963993988073" data-interactive><span class="ltr">0993988073</span></a>
+            <br />
+            كارول &nbsp;·&nbsp;
+            <a href="tel:+963981330436" data-interactive><span class="ltr">0981330436</span></a>
+          </p>
+
+          <p class="rsvp-count" data-in style="--i: 6">عدد الأشخاص: (&nbsp;&nbsp;&nbsp;&nbsp;)</p>
+
+          <a
+            class="wa"
+            data-in
+            style="--i: 7"
+            data-interactive
+            href="https://wa.me/963993988073?text=%D8%A3%D9%87%D9%84%D8%A7%D9%8B%20%D8%AC%D9%88%D8%B1%D8%AC%D8%8C%20%D8%A3%D8%A4%D9%83%D8%AF%20%D8%AD%D8%B6%D9%88%D8%B1%D9%8A%20%D9%81%D9%8A%20%D8%AD%D9%81%D9%84%20%D8%B2%D9%81%D8%A7%D9%81%D9%83%D9%85%D8%A7%20%E2%80%94%20%D8%B9%D8%AF%D8%AF%20%D8%A7%D9%84%D8%A3%D8%B4%D8%AE%D8%A7%D8%B5%3A%20"
+            target="_blank"
+            rel="noopener"
+            >تأكيد الحضور عبر واتساب</a
+          >
+        </div>
+      </section>
+
+      <!-- ══════════════ SCENE 5 — FINALE ══════════════ -->
+      <section class="scene" id="scene-5" aria-label="ختام">
+        <div class="photo" aria-hidden="true">
+          <img src="assets/finale.jpg" alt="" loading="lazy" onerror="this.remove()" />
+        </div>
+
+        <div class="hearts" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 20C8 16.6 3 13.6 3 9.2A4.2 4.2 0 0 1 12 6.6 4.2 4.2 0 0 1 21 9.2c0 4.4-5 7.4-9 10.8Z" /></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 20C8 16.6 3 13.6 3 9.2A4.2 4.2 0 0 1 12 6.6 4.2 4.2 0 0 1 21 9.2c0 4.4-5 7.4-9 10.8Z" /></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 20C8 16.6 3 13.6 3 9.2A4.2 4.2 0 0 1 12 6.6 4.2 4.2 0 0 1 21 9.2c0 4.4-5 7.4-9 10.8Z" /></svg>
+        </div>
+
+        <p class="finale-names" data-in style="--i: 0">جورج &nbsp;و&nbsp; كارول</p>
+        <p class="finale-line" data-in style="--i: 1">فرحنا تبدأ مع الربّ ونُكمّل بحضوركم</p>
+
+        <span class="rings-badge" aria-hidden="true">
+          <svg viewBox="0 0 200 120" fill="none"><use href="#ringsArt" /></svg>
+        </span>
+      </section>
+    </main>
+
+    <nav class="dots" id="dots" aria-label="التنقل بين الشاشات"></nav>
+
+    <div class="swipe-hint" id="swipeHint" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
+        <path d="M6 15l6-6 6 6" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      اسحب للأعلى
+    </div>
+
+    <div class="grain" aria-hidden="true"></div>
+    <p id="live" aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)"></p>
+
+    <!-- ── Shared vector art, defined once and referenced by <use>. ─────────
+         SUBSTITUTE: these are the stand-ins for rings.png and pampas.png.
+         Drop the real files into assets/ and they take over automatically. -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <defs>
+        <linearGradient id="foil" x1="0" y1="0" x2=".35" y2="1">
+          <stop offset="0%" stop-color="#E8CF8B" />
+          <stop offset="30%" stop-color="#C9A227" />
+          <stop offset="58%" stop-color="#F3E5BC" />
+          <stop offset="80%" stop-color="#A8801A" />
+          <stop offset="100%" stop-color="#C9A227" />
+        </linearGradient>
+
+        <!-- Two interlocked bands. Gold is an alternation of light and dark
+             as the metal turns — flat yellow reads as mustard. -->
+        <g id="ringsArt">
+          <ellipse cx="78" cy="66" rx="40" ry="38" stroke="url(#foil)" stroke-width="6" />
+          <ellipse cx="122" cy="58" rx="36" ry="42" stroke="url(#foil)" stroke-width="7" transform="rotate(-12 122 58)" />
+          <path d="M122 12l6 7-6 7-6-7Z" fill="url(#foil)" />
+        </g>
+
+        <!-- Pampas fronds with the rings resting over them. -->
+        <g id="ornamentArt">
+          <g opacity=".85">
+            <ellipse cx="52" cy="96" rx="9" ry="46" fill="#E4D6BC" transform="rotate(-38 52 96)" />
+            <ellipse cx="74" cy="86" rx="8" ry="50" fill="#EFE3CD" transform="rotate(-20 74 86)" />
+            <ellipse cx="96" cy="84" rx="7" ry="46" fill="#E0D0B2" transform="rotate(-4 96 84)" />
+            <ellipse cx="116" cy="90" rx="7" ry="42" fill="#F2E9D8" transform="rotate(14 116 90)" />
+            <ellipse cx="36" cy="108" rx="7" ry="38" fill="#EBDFC6" transform="rotate(-56 36 108)" />
+          </g>
+          <g transform="translate(96 46) scale(.55)"><use href="#ringsArt" /></g>
+        </g>
+      </defs>
+    </svg>
+
+    <script>
+      /* ══════════════════════════════════════════════════════════════════════
+         The deck.
+
+         Six scenes, always mounted, stacked and toggled by attribute. Never
+         unmounted mid-transition — that causes a flash.
+         ═════════════════════════════════════════════════════════════════════ */
+
+      const SCENES = 6
+      const DUR = 700          // must match --scene-ms
+      const LOCK = DUR + 100   // input is ignored for the whole transition
+
+      const deck = document.getElementById('deck')
+      const scenes = [...document.querySelectorAll('.scene')]
+      const dotsBar = document.getElementById('dots')
+      const swipeHint = document.getElementById('swipeHint')
+      const live = document.getElementById('live')
+      const seal = document.getElementById('seal')
+      const scene0 = document.getElementById('scene-0')
+
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
+      const params = new URLSearchParams(location.search)
+      let autoplay = params.get('autoplay') === '1'
+
+      let current = 0
+      let locked = false
+      let opened = false
+      let hintTimer = 0
+      let autoTimer = 0
+      let hintUsed = false
+
+      /* ── Progress dots ─────────────────────────────────────────────────── */
+      for (let i = 0; i < SCENES; i += 1) {
+        const b = document.createElement('button')
+        b.type = 'button'
+        b.setAttribute('aria-label', `الشاشة ${i + 1}`)
+        b.addEventListener('click', (e) => {
+          e.stopPropagation()
+          cancelAutoplay()
+          go(i)
+        })
+        dotsBar.appendChild(b)
+      }
+      const dots = [...dotsBar.children]
+
+      function paintDots() {
+        dots.forEach((d, i) => d.setAttribute('aria-current', String(i === current)))
+        // The envelope is one object, not step 1 of 6.
+        dotsBar.toggleAttribute('data-show', current > 0)
+      }
+
+      /* ── Navigation ────────────────────────────────────────────────────── */
+
+      function go(next, { back = false, instant = false } = {}) {
+        if (locked || next === current || next < 0 || next >= SCENES) return
+        const dir = back || next < current
+
+        const from = scenes[current]
+        const to = scenes[next]
+
+        locked = true
+        from.removeAttribute('data-active')
+        from.setAttribute('data-leaving', dir ? 'back' : '')
+        if (dir) to.setAttribute('data-entering', 'back')
+
+        // Content already read is simply present when stepping backwards.
+        to.toggleAttribute('data-instant', dir || instant)
+        to.setAttribute('data-active', '')
+
+        current = next
+        paintDots()
+        live.textContent = to.getAttribute('aria-label') || ''
+        history.replaceState(null, '', `#scene-${next}`)
+
+        setTimeout(() => {
+          from.removeAttribute('data-leaving')
+          to.removeAttribute('data-entering')
+          locked = false
+        }, LOCK)
+
+        if (current === 1) armSwipeHint()
+        else dismissSwipeHint()
+        queueAutoplay()
+      }
+
+      const next = () => {
+        if (current === SCENES - 1) return bounce()
+        go(current + 1)
+      }
+      const prev = () => current > 0 && go(current - 1, { back: true })
+
+      /* The end of the deck answers an upward swipe without any words. */
+      function bounce() {
+        if (reduced || locked) return
+        const el = scenes[current]
+        el.animate(
+          [{ transform: 'translateY(0)' }, { transform: 'translateY(-20px)' }, { transform: 'translateY(0)' }],
+          { duration: 400, easing: 'cubic-bezier(.22,.61,.36,1)' },
+        )
+      }
+
+      /* ── The envelope, and its hand-off into Scene 1 ───────────────────── */
+
+      function openEnvelope() {
+        if (opened) return
+        opened = true
+        scene0.setAttribute('data-opening', '')
+
+        // The envelope opening IS the transition — no crossfade here. The card
+        // is already the cover photo, so the swap underneath it is invisible.
+        const wait = reduced ? 700 : 4000
+        setTimeout(() => {
+          scenes[1].setAttribute('data-active', '')
+          scene0.style.transition = 'opacity 500ms ease'
+          scene0.style.opacity = '0'
+          current = 1
+          paintDots()
+          armSwipeHint()
+          setTimeout(() => {
+            scene0.removeAttribute('data-active')
+            scene0.style.visibility = 'hidden'
+          }, 520)
+          queueAutoplay()
+        }, wait)
+      }
+
+      seal.addEventListener('click', (e) => {
+        e.stopPropagation()
+        cancelAutoplay(false)
+        openEnvelope()
+      })
+
+      /* ── The swipe hint: shown once, on Scene 1, then never again ──────── */
+
+      function armSwipeHint() {
+        if (hintUsed || reduced) return
+        clearTimeout(hintTimer)
+        hintTimer = setTimeout(() => {
+          if (current === 1 && !hintUsed) swipeHint.setAttribute('data-show', '')
+        }, 2500)
+      }
+
+      function dismissSwipeHint() {
+        clearTimeout(hintTimer)
+        swipeHint.removeAttribute('data-show')
+      }
+
+      function usedNavigation() {
+        hintUsed = true
+        dismissSwipeHint()
+      }
+
+      /* ── Autoplay. Any input hands control back, permanently. ──────────── */
+
+      const HOLD = [2000, 5500, 7000, 7000, 6000, Infinity]
+
+      function queueAutoplay() {
+        clearTimeout(autoTimer)
+        if (!autoplay) return
+        const hold = HOLD[current]
+        if (!isFinite(hold)) return
+        autoTimer = setTimeout(() => {
+          if (current === 0) openEnvelope()
+          else go(current + 1)
+        }, hold)
+      }
+
+      function cancelAutoplay(alsoStop = true) {
+        if (alsoStop) autoplay = false
+        clearTimeout(autoTimer)
+      }
+
+      /* ── Touch: swipe, with damped live drag ───────────────────────────── */
+
+      let sx = 0, sy = 0, st = 0, dragging = false
+
+      addEventListener('touchstart', (e) => {
+        if (locked) return
+        const t = e.touches[0]
+        sx = t.clientX; sy = t.clientY; st = performance.now()
+        dragging = false
+      }, { passive: true })
+
+      addEventListener('touchmove', (e) => {
+        if (locked || reduced) return
+        const t = e.touches[0]
+        const dx = t.clientX - sx
+        const dy = t.clientY - sy
+        // A mostly-horizontal gesture is the browser's, not ours.
+        if (Math.abs(dx) > Math.abs(dy)) return
+        if (Math.abs(dy) < 15) return
+        dragging = true
+        deck.setAttribute('data-dragging', '')
+        scenes[current].style.transform = `translateY(${dy * 0.25}px) scale(1)`
+      }, { passive: true })
+
+      addEventListener('touchend', (e) => {
+        const el = scenes[current]
+        deck.removeAttribute('data-dragging')
+        if (dragging) {
+          el.style.transition = 'transform 350ms cubic-bezier(.22,.61,.36,1)'
+          el.style.transform = ''
+          setTimeout(() => { el.style.transition = '' }, 360)
+        }
+        if (locked) return
+
+        const t = e.changedTouches[0]
+        const dx = t.clientX - sx
+        const dy = t.clientY - sy
+        const ms = performance.now() - st
+        if (Math.abs(dx) > Math.abs(dy)) return
+
+        const far = Math.abs(dy) > 50
+        const fast = Math.abs(dy) / ms > 0.3
+        if (!far && !fast) return
+
+        cancelAutoplay()
+        usedNavigation()
+        if (dy < 0) { if (current === 0) openEnvelope(); else next() }
+        else prev()
+      }, { passive: true })
+
+      /* ── Tap zones. The middle third is inert so links stay tappable. ──── */
+
+      addEventListener('click', (e) => {
+        if (e.target.closest('a, button, [data-interactive]')) return
+        if (locked || dragging) return
+        const third = innerWidth / 3
+        if (e.clientX > third && e.clientX < third * 2) return
+
+        cancelAutoplay()
+        usedNavigation()
+        // RTL: the right third is "back", the left third is "forward" — the
+        // page reads right to left, so navigation follows it.
+        if (e.clientX < third) { if (current === 0) openEnvelope(); else next() }
+        else prev()
+      })
+
+      /* ── Keyboard ──────────────────────────────────────────────────────── */
+
+      addEventListener('keydown', (e) => {
+        const k = e.key
+        if (k === 'Escape') return cancelAutoplay()
+        const fwd = k === 'ArrowDown' || k === 'ArrowLeft' || k === ' ' || k === 'PageDown'
+        const bwd = k === 'ArrowUp' || k === 'ArrowRight' || k === 'PageUp'
+        if (!fwd && !bwd && k !== 'Home' && k !== 'End') return
+        e.preventDefault()
+        cancelAutoplay()
+        usedNavigation()
+        if (k === 'Home') return go(0, { back: true })
+        if (k === 'End') return go(SCENES - 1)
+        if (fwd) { if (current === 0) openEnvelope(); else next() }
+        else prev()
+      })
+
+      /* ── Boot ──────────────────────────────────────────────────────────── */
+
+      function start() {
+        document.getElementById('loader').setAttribute('data-done', '')
+
+        // Deep link: #scene-3 opens straight there, skipping the envelope.
+        const m = /^#scene-(\d)$/.exec(location.hash)
+        const at = m ? Math.min(SCENES - 1, Math.max(0, Number(m[1]))) : 0
+
+        current = at
+        scenes[at].setAttribute('data-active', '')
+        if (at > 0) opened = true
+        paintDots()
+        if (at === 1) armSwipeHint()
+        queueAutoplay()
+      }
+
+      // Wait for the fonts so the names never re-flow from a fallback face —
+      // but never longer than 2.5s, because a slow font must not hold a guest
+      // at a blank screen.
+      const ready = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()
+      Promise.race([ready, new Promise((r) => setTimeout(r, 2500))]).then(() =>
+        setTimeout(start, 250),
+      )
+    </script>
+  </body>
+</html>

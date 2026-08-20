@@ -2232,7 +2232,8 @@
         to.setAttribute('data-active', '')
 
         current = next
-        if (to.id === 'scene-4' && gbLoad) gbLoad()
+        // Warmed a page early, so the wall is usually there on arrival.
+        if ((to.id === 'scene-3' || to.id === 'scene-4') && gbLoad) gbLoad()
         paintDots()
         live.textContent = to.getAttribute('aria-label') || ''
         history.replaceState(null, '', `#scene-${next}`)
@@ -2616,15 +2617,17 @@
           else gbStatus.removeAttribute('data-tone')
         }
 
-        function paintWall(entries) {
+        const gbSay = (text) => {
           gbWall.textContent = ''
-          if (!entries.length) {
-            const p = document.createElement('p')
-            p.className = 'gb-empty'
-            p.textContent = 'كن أول من يبارك'
-            gbWall.appendChild(p)
-            return
-          }
+          const p = document.createElement('p')
+          p.className = 'gb-empty'
+          p.textContent = text
+          gbWall.appendChild(p)
+        }
+
+        function paintWall(entries) {
+          if (!entries.length) return gbSay('كن أول من يبارك')
+          gbWall.textContent = ''
           for (const entry of entries) {
             const li = document.createElement('li')
             li.className = 'gb-note'
@@ -2642,18 +2645,17 @@
         async function loadWall() {
           if (loaded) return
           loaded = true
+          // Apps Script cold-starts, and a blank pane for four seconds reads
+          // as broken rather than as loading.
+          gbSay('جارٍ تحميل المباركات…')
           try {
             const res = await fetch(GUESTBOOK_URL, { method: 'GET' })
             const data = await res.json()
             if (!data.ok) throw new Error(data.error || 'refused')
             paintWall(data.entries || [])
           } catch (err) {
-            loaded = false
-            const p = document.createElement('p')
-            p.className = 'gb-empty'
-            p.textContent = 'تعذّر تحميل المباركات الآن'
-            gbWall.textContent = ''
-            gbWall.appendChild(p)
+            loaded = false   // a return visit tries again
+            gbSay('تعذّر تحميل المباركات الآن')
           }
         }
 
@@ -2715,6 +2717,7 @@
 
         current = at
         scenes[at].setAttribute('data-active', '')
+        if (at >= SCENES - 2 && gbLoad) gbLoad()
         if (at > 0) opened = true
         paintDots()
         if (at === 1) armSwipeHint()

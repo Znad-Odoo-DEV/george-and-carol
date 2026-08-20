@@ -436,7 +436,7 @@
 
       .gate__hint {
         font-family: var(--sans);
-        font-size: 11px;
+        font-size: 12.5px;
         word-spacing: var(--air);
         color: rgba(251, 248, 243, .5);
         animation:
@@ -541,8 +541,10 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-        opacity: 0.35;
-        filter: blur(1.5px) saturate(0.3) brightness(1.12);
+        /* A whisper. At the brief's 0.35 the real photograph competes with
+           the type instead of sitting behind it. */
+        opacity: 0.16;
+        filter: blur(2px) saturate(0.22) brightness(1.24);
       }
 
       /* Corner ornament: pampas plus the two rings. */
@@ -654,7 +656,7 @@
       /* ── Type ─────────────────────────────────────────────────────────── */
 
       .eyebrow {
-        font-size: 10px;
+        font-size: 12px;
         font-weight: 400;
         word-spacing: 0.35em;
         color: var(--muted);
@@ -678,12 +680,12 @@
 
       .verse {
         font-family: var(--display);
-        font-size: 12px;
+        font-size: 14px;
         line-height: 2;
         color: var(--muted);
       }
 
-      .verse span { display: block; font-size: 10px; opacity: 0.85; margin-top: 4px; }
+      .verse span { display: block; font-size: 11.5px; opacity: 0.85; margin-top: 4px; }
 
       .heading {
         font-family: var(--display);
@@ -723,8 +725,8 @@
         align-items: center;
         justify-content: center;
         gap: 10px;
-        margin-top: 14px;
-        font-size: 13px;
+        margin-top: 16px;
+        font-size: 15px;
         word-spacing: 0.18em;
         color: var(--ink);
       }
@@ -814,20 +816,20 @@
       .node-badge svg { width: 17px; height: 17px; }
 
       .node-time {
-        font-size: 15px;
+        font-size: 17px;
         font-weight: 700;
         color: var(--ink);
       }
 
       .node-title {
-        font-size: 13px;
+        font-size: 15px;
         font-weight: 400;
         color: var(--ink);
         margin-top: 2px;
       }
 
       .node-place {
-        font-size: 11px;
+        font-size: 12.5px;
         line-height: 1.75;
         color: var(--muted);
         margin-top: 3px;
@@ -883,7 +885,7 @@
       @keyframes dot-in { to { transform: translateX(50%) scale(1); } }
 
       .block-title {
-        font-size: 12px;
+        font-size: 14px;
         font-weight: 700;
         word-spacing: 0.2em;
         color: #3a342c;
@@ -891,8 +893,8 @@
 
       .block-body {
         max-width: 26em;
-        margin-top: 5px;
-        font-size: 11px;
+        margin-top: 6px;
+        font-size: 13px;
         line-height: 1.75;
         color: var(--body);
       }
@@ -965,14 +967,14 @@
 
       .rsvp-note {
         margin-top: 30px;
-        font-size: 13px;
+        font-size: 15px;
         word-spacing: 0.2em;
         color: #6e6455;
       }
 
       .rsvp-contacts {
         margin-top: 16px;
-        font-size: 12px;
+        font-size: 14px;
         line-height: 2.1;
         color: #6e6455;
       }
@@ -985,10 +987,35 @@
       }
 
       .rsvp-count {
-        margin-top: 14px;
-        font-size: 12px;
+        display: flex;
+        align-items: baseline;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 16px;
+        font-size: 14px;
         word-spacing: 0.2em;
-        color: var(--muted);
+        color: var(--body);
+      }
+
+      /* Ruled like the blank on the printed card, not boxed like a form. */
+      .rsvp-count input {
+        width: 3.4rem;
+        padding: 2px 0 4px;
+        font: inherit;
+        font-size: 16px;   /* under 16px, iOS zooms the page on focus */
+        text-align: center;
+        color: var(--ink);
+        background: none;
+        border: 0;
+        border-bottom: 1px solid var(--gold);
+        border-radius: 0;
+        -webkit-appearance: none;
+        appearance: none;
+      }
+
+      .rsvp-count input:focus {
+        outline: none;
+        border-bottom-color: var(--gold-shadow);
       }
 
       /* One row of two, wrapping to a column where the screen is too narrow
@@ -1008,7 +1035,7 @@
         min-height: 44px;
         padding: 0 22px;
         font-family: var(--sans);
-        font-size: 12px;
+        font-size: 13.5px;
         word-spacing: 0.18em;
         color: #6e6455;
         text-decoration: none;
@@ -1041,7 +1068,7 @@
         bottom: calc(58px + env(safe-area-inset-bottom));
         z-index: 3;
         text-align: center;
-        font-size: 11px;
+        font-size: 13px;
         word-spacing: 0.2em;
         color: rgba(255, 255, 255, 0.82);
         text-shadow: 0 1px 10px rgba(26, 22, 20, 0.6);
@@ -1151,7 +1178,8 @@
       @keyframes dot-fill { to { transform: scaleX(1); } }
       .dots button:focus-visible { outline: 1px solid var(--gold); outline-offset: 3px; }
 
-      /* Told once, on Scene 1, and never again. */
+      /* Stands on every scene but the last. The guest is never left
+         wondering how to go on. */
       .swipe-hint {
         position: fixed;
         left: 0;
@@ -1161,8 +1189,8 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 4px;
-        font-size: 10px;
+        gap: 5px;
+        font-size: 11.5px;
         word-spacing: 0.2em;
         color: var(--ink);
         opacity: 0;
@@ -1172,12 +1200,32 @@
       }
 
       .swipe-hint[data-show] {
-        opacity: 0.45;
+        opacity: 0.5;
         visibility: visible;
-        animation: breathe 2s ease-in-out infinite;
       }
 
-      .swipe-hint svg { width: 14px; height: 14px; }
+      /* A hairline runs down, then the chevron breathes under it — a drawn
+         line reads as "onward" far more quietly than an arrow alone. */
+      .swipe-hint i {
+        display: block;
+        width: 1px;
+        height: 26px;
+        background: linear-gradient(180deg, transparent, var(--gold));
+        transform-origin: top;
+        animation: cue-line 2.6s var(--ease-scene) infinite;
+      }
+
+      .swipe-hint svg {
+        width: 13px;
+        height: 13px;
+        animation: breathe 2.6s ease-in-out infinite;
+      }
+
+      @keyframes cue-line {
+        0%        { transform: scaleY(0); opacity: 0; }
+        30%       { transform: scaleY(1); opacity: 1; }
+        70%, 100% { transform: scaleY(1); opacity: 0; }
+      }
 
       /* The single detail that makes it read as print rather than screen. */
       .grain {
@@ -1611,7 +1659,18 @@
             <a href="tel:+963981330436" data-interactive><span class="ltr">0981330436</span></a>
           </p>
 
-          <p class="rsvp-count" data-in style="--i: 6">عدد الأشخاص: (&nbsp;&nbsp;&nbsp;&nbsp;)</p>
+          <label class="rsvp-count" data-in style="--i: 6" data-interactive>
+            <span>عدد الأشخاص</span>
+            <input
+              id="guestCount"
+              type="number"
+              min="1"
+              max="99"
+              inputmode="numeric"
+              placeholder="—"
+              aria-label="عدد الأشخاص الذين يعتذرون"
+            />
+          </label>
 
           <div class="wa-row" data-in style="--i: 7">
             <a
@@ -1660,10 +1719,11 @@
     <nav class="dots" id="dots" aria-label="التنقل بين الشاشات"></nav>
 
     <div class="swipe-hint" id="swipeHint" aria-hidden="true">
+      <i></i>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
-        <path d="M6 15l6-6 6 6" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
       </svg>
-      اسحب للأعلى
+      مرّر للأسفل
     </div>
 
     <div class="grain" aria-hidden="true"></div>
@@ -1728,9 +1788,10 @@
       const params = new URLSearchParams(location.search)
       const autoParam = params.get('autoplay')
 
-      /* On by default: the invitation plays itself, and the guest only has to
-         watch. `?autoplay=0` hands it back to them entirely.               */
-      let autoplay = autoParam !== '0'
+      /* Off by default: the guest scrolls, at whatever pace they read. A
+         deck that advances itself fights them. `?autoplay=1` restores the
+         hands-free run, which is what a screen recording wants.            */
+      let autoplay = autoParam === '1'
 
       /* The seal still waits to be pressed. That press is the whole point of
          an envelope, and spending it on a timer wastes the best moment in the
@@ -1793,8 +1854,8 @@
           locked = false
         }, LOCK)
 
-        if (current === 1) armSwipeHint()
-        else dismissSwipeHint()
+        dismissSwipeHint()
+        armSwipeHint()
         queueAutoplay()
       }
 
@@ -1847,13 +1908,20 @@
 
       /* ── The swipe hint: shown once, on Scene 1, then never again ──────── */
 
+      /* Shown on every scene the guest can move on from — not on the
+         envelope, where the seal is the action, and not on the finale, where
+         there is nowhere left to go. */
       function armSwipeHint() {
-        if (hintUsed || reduced) return
-        if (autoplay) return   // it is already moving; do not ask for a swipe
         clearTimeout(hintTimer)
+        if (autoplay || current === 0 || current === SCENES - 1) {
+          swipeHint.removeAttribute('data-show')
+          return
+        }
         hintTimer = setTimeout(() => {
-          if (current === 1 && !hintUsed) swipeHint.setAttribute('data-show', '')
-        }, 2500)
+          if (current > 0 && current < SCENES - 1) {
+            swipeHint.setAttribute('data-show', '')
+          }
+        }, 1600)
       }
 
       function dismissSwipeHint() {
@@ -1861,8 +1929,9 @@
         swipeHint.removeAttribute('data-show')
       }
 
+      /* The cue is a standing offer, not a one-off tip, so using the deck
+         hides it only until the next scene settles. */
       function usedNavigation() {
-        hintUsed = true
         dismissSwipeHint()
       }
 
@@ -1996,9 +2065,40 @@
         else prev()
       })
 
+      /* ── Wheel: scrolling down is how the deck is meant to be read ──────
+         A trackpad fires dozens of small deltas per flick, so accumulate
+         them and act once past a threshold, then wait for the wheel to go
+         quiet before arming again.
+         ------------------------------------------------------------------ */
+
+      let wheelAcc = 0
+      let wheelIdle = 0
+
+      addEventListener(
+        'wheel',
+        (e) => {
+          if (locked) return
+          wheelAcc += e.deltaY
+          clearTimeout(wheelIdle)
+          wheelIdle = setTimeout(() => { wheelAcc = 0 }, 220)
+
+          if (Math.abs(wheelAcc) < 42) return
+          const down = wheelAcc > 0
+          wheelAcc = 0
+
+          cancelAutoplay()
+          usedNavigation()
+          if (down) { if (current === 0) openEnvelope(); else next() }
+          else prev()
+        },
+        { passive: true },
+      )
+
       /* ── Keyboard ──────────────────────────────────────────────────────── */
 
       addEventListener('keydown', (e) => {
+        // Space and the arrows belong to a field while one has focus.
+        if (e.target.closest('input, textarea')) return
         const k = e.key
         if (k === 'Escape') return cancelAutoplay()
         const fwd = k === 'ArrowDown' || k === 'ArrowLeft' || k === ' ' || k === 'PageDown'
@@ -2012,6 +2112,29 @@
         if (fwd) { if (current === 0) openEnvelope(); else next() }
         else prev()
       })
+
+      /* ── The apology carries the party size ─────────────────────────────
+         Whatever the guest types is folded into both WhatsApp messages, so
+         all that is left to do is press send.
+         ------------------------------------------------------------------ */
+
+      const countField = document.getElementById('guestCount')
+
+      if (countField) {
+        const links = [...document.querySelectorAll('.wa')]
+        const base = links.map((a) => a.href)
+
+        const writeCount = () => {
+          const n = countField.value.trim()
+          links.forEach((a, i) => {
+            a.href = n ? `${base[i]}${encodeURIComponent(` عدد الأشخاص: ${n}`)}` : base[i]
+          })
+        }
+
+        countField.addEventListener('input', writeCount)
+        // Typing and tapping inside the field must not page the deck.
+        countField.addEventListener('click', (e) => e.stopPropagation())
+      }
 
       /* ── Boot ──────────────────────────────────────────────────────────── */
 

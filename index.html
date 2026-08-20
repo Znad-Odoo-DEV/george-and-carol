@@ -723,6 +723,162 @@
       /* ── The countdown ──────────────────────────────────────────────
          Counted against a fixed instant, not against the reader's clock, so a
          guest in Tartus and a guest abroad see the same number. */
+      /* ═══════════════════════════════════════════════════════════════
+         SCENE 5 — THE GUESTBOOK
+         ═══════════════════════════════════════════════════════════════ */
+
+      .gb-lead {
+        margin: 6px 0 0;
+        font-family: var(--serif);
+        font-size: 13px;
+        line-height: 1.8;
+        color: var(--body);
+        text-align: center;
+      }
+
+      .gb-form {
+        margin: clamp(14px, 3.4svh, 24px) auto 0;
+        width: min(100%, 24rem);
+      }
+
+      /* Ruled, not boxed -- the same blank-on-a-printed-card idea as the
+         guest count, so the two forms in this piece speak with one voice. */
+      .gb-field {
+        display: block;
+        width: 100%;
+        padding: 7px 2px 6px;
+        font-family: var(--serif);
+        font-size: 16px;   /* under 16px, iOS zooms the page on focus */
+        line-height: 1.7;
+        color: var(--ink);
+        text-align: right;
+        background: none;
+        border: 0;
+        border-bottom: 1px solid rgba(201, 162, 39, 0.5);
+        border-radius: 0;
+        -webkit-appearance: none;
+        appearance: none;
+      }
+
+      .gb-field + .gb-field { margin-top: 12px; }
+      .gb-field::placeholder { color: var(--muted); opacity: 1; }
+      .gb-field:focus { outline: none; border-bottom-color: var(--gold-shadow); }
+
+      .gb-area { resize: none; min-height: 4.6em; }
+
+      /* Bait for bots. Off-screen rather than display:none, because the
+         crawlers worth stopping skip anything that is not rendered. */
+      .gb-trap {
+        position: absolute;
+        left: -9999px;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+      }
+
+      .gb-send {
+        display: block;
+        min-height: 44px;
+        margin: 16px auto 0;
+        padding: 0 26px;
+        font-family: var(--sans);
+        font-size: 13.5px;
+        word-spacing: 0.18em;
+        color: #6e6455;
+        background: transparent;
+        border: 1px solid var(--gold);
+        border-radius: 999px;
+        cursor: pointer;
+      }
+
+      .gb-send[disabled] { opacity: 0.45; cursor: default; }
+
+      .gb-status {
+        min-height: 1.2em;
+        margin: 9px 0 0;
+        font-family: var(--sans);
+        font-size: 11.5px;
+        color: var(--muted);
+        text-align: center;
+      }
+
+      .gb-status[data-tone='bad'] { color: #a2604a; }
+
+      /* ── The wall ─────────────────────────────────────────────────────
+         It scrolls inside itself. The deck's wheel and swipe handlers hand
+         this element its own gestures back, so reading the blessings never
+         turns the page out from under you. */
+      .gb-wall {
+        flex: 1;
+        min-height: 0;
+        margin: clamp(14px, 3svh, 22px) 0 0;
+        padding: 0 2px;
+        overflow-y: auto;
+        list-style: none;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(201, 162, 39, 0.45) transparent;
+      }
+
+      .gb-wall::-webkit-scrollbar { width: 3px; }
+      .gb-wall::-webkit-scrollbar-thumb {
+        background: rgba(201, 162, 39, 0.45);
+        border-radius: 999px;
+      }
+
+      .gb-note {
+        position: relative;
+        padding: 13px 16px 12px;
+        background: rgba(255, 253, 247, 0.62);
+        border: 1px solid rgba(201, 162, 39, 0.22);
+      }
+
+      .gb-note + .gb-note { margin-top: 9px; }
+
+      /* A single hairline of gold down the leading edge, so a stack of them
+         reads as one ruled column rather than as a list of boxes. */
+      .gb-note::before {
+        content: '';
+        position: absolute;
+        inset-block: -1px;
+        inset-inline-start: -1px;
+        width: 2px;
+        background: var(--gold);
+        opacity: 0.55;
+      }
+
+      .gb-msg {
+        margin: 0;
+        font-family: var(--serif);
+        font-size: 14px;
+        line-height: 1.85;
+        color: var(--ink);
+        overflow-wrap: anywhere;
+        /* Each blessing reads in its own direction, not the page's. */
+        unicode-bidi: plaintext;
+        text-align: start;
+      }
+
+      .gb-from {
+        margin: 7px 0 0;
+        font-family: var(--display);
+        font-size: 13px;
+        color: var(--gold-shadow);
+        overflow-wrap: anywhere;
+        unicode-bidi: plaintext;
+        text-align: start;
+      }
+
+      .gb-from::before { content: '— '; opacity: 0.6; }
+
+      .gb-empty {
+        margin: clamp(20px, 6svh, 44px) 0 0;
+        font-family: var(--serif);
+        font-size: 13px;
+        color: var(--muted);
+        text-align: center;
+      }
+
       /* A single photograph closing the day's page, arched to answer the
          door. It is the same file the doorway glimpses, so showing it here
          costs nothing. */
@@ -1885,6 +2041,49 @@
         </div>
       </section>
 
+
+      <!-- ══════════════ SCENE 4 — THE GUESTBOOK ══════════════ -->
+      <section class="scene" id="scene-4" aria-label="دفتر المباركات">
+        <div class="roses" aria-hidden="true">
+          <img src="assets/rose-bg.jpg" alt="" loading="lazy" onerror="this.remove()" />
+        </div>
+
+        <div class="ornament ornament--tl" aria-hidden="true">
+          <svg viewBox="0 0 220 190" fill="none"><use href="#ornamentArt" /></svg>
+          <img class="ornament-photo" src="assets/sprigs.jpg" alt="" loading="lazy" onerror="this.remove()" />
+        </div>
+
+        <div class="pad">
+          <h2 class="heading" data-in style="--i: 0">دفتر المباركات</h2>
+          <p class="gb-lead" data-in style="--i: 1">اكتب اسمك وكلمة تباركهما بها</p>
+
+          <form class="gb-form" id="gbForm" data-in style="--i: 2" data-interactive novalidate>
+            <input
+              class="gb-field"
+              id="gbName"
+              type="text"
+              maxlength="40"
+              required
+              placeholder="اسمك"
+              autocomplete="name"
+              enterkeyhint="next"
+            />
+            <textarea
+              class="gb-field gb-area"
+              id="gbMsg"
+              maxlength="240"
+              required
+              rows="3"
+              placeholder="مباركتك لجورج وكارول…"
+            ></textarea>
+            <input class="gb-trap" id="gbTrap" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" />
+            <button class="gb-send" id="gbSend" type="submit">أرسل المباركة</button>
+            <p class="gb-status" id="gbStatus" role="status"></p>
+          </form>
+
+          <ul class="gb-wall" id="gbWall" data-scroll data-interactive></ul>
+        </div>
+      </section>
     </main>
 
     <nav class="dots" id="dots" aria-label="التنقل بين الشاشات"></nav>
@@ -1947,12 +2146,24 @@
          unmounted mid-transition — that causes a flash.
          ═════════════════════════════════════════════════════════════════════ */
 
-      const SCENES = 4
+      /* ── دفتر المباركات ─────────────────────────────────────────────────
+         The one line that turns the guestbook on. Paste the /exec URL of the
+         deployed Apps Script from guestbook.gs here.
+
+         Left empty, the scene deletes itself below and the deck is four pages
+         again. That is deliberate: a wall backed by nothing could only ever
+         show a guest their own words, and a page that pretends to have sent
+         a blessing is worse than a page with no wall at all.             */
+      const GUESTBOOK_URL = ''
+
+      if (!GUESTBOOK_URL) document.getElementById('scene-4').remove()
+
+      const scenes = [...document.querySelectorAll('.scene')]
+      const SCENES = scenes.length
       const DUR = 700          // must match --scene-ms
       const LOCK = DUR + 100   // input is ignored for the whole transition
 
       const deck = document.getElementById('deck')
-      const scenes = [...document.querySelectorAll('.scene')]
       const dotsBar = document.getElementById('dots')
       const swipeHint = document.getElementById('swipeHint')
       const live = document.getElementById('live')
@@ -1979,6 +2190,7 @@
       let hintTimer = 0
       let autoTimer = 0
       let hintUsed = false
+      let gbLoad = null   // set once the guestbook is configured
 
       /* ── Progress dots ─────────────────────────────────────────────────── */
       for (let i = 0; i < SCENES; i += 1) {
@@ -2019,6 +2231,7 @@
         to.setAttribute('data-active', '')
 
         current = next
+        if (to.id === 'scene-4' && gbLoad) gbLoad()
         paintDots()
         live.textContent = to.getAttribute('aria-label') || ''
         history.replaceState(null, '', `#scene-${next}`)
@@ -2239,6 +2452,7 @@
         const far = Math.abs(dy) > 50
         const fast = Math.abs(dy) / ms > 0.3
         if (!far && !fast) return
+        if (scrollsItself(e, dy < 0)) return
 
         cancelAutoplay()
         usedNavigation()
@@ -2271,10 +2485,26 @@
       let wheelAcc = 0
       let wheelIdle = 0
 
+      /* A pane that scrolls inside the deck keeps the gesture that belongs
+         to it, but only while it still has somewhere to go -- so reaching the
+         end of the blessings hands the page back rather than trapping you. */
+      function scrollsItself(e, down) {
+        // Not every event target is an Element -- one dispatched on the window
+        // is the window, and asking it for closest() throws.
+        const el = e.target instanceof Element ? e.target : null
+        const pane = el && el.closest('[data-scroll]')
+        if (!pane) return false
+        const room = down
+          ? pane.scrollHeight - pane.clientHeight - pane.scrollTop > 1
+          : pane.scrollTop > 1
+        return room
+      }
+
       addEventListener(
         'wheel',
         (e) => {
           if (locked) return
+          if (scrollsItself(e, e.deltaY > 0)) { wheelAcc = 0; return }
           wheelAcc += e.deltaY
           clearTimeout(wheelIdle)
           wheelIdle = setTimeout(() => { wheelAcc = 0 }, 220)
@@ -2359,6 +2589,118 @@
         }
         tickCountdown()
         setInterval(tickCountdown, 1000)
+      }
+
+      /* ── دفتر المباركات ─────────────────────────────────────────────────
+         Every blessing is written with textContent. Nothing a guest types is
+         ever parsed as HTML, so the wall cannot be used to put markup, a
+         script or a link onto anyone else's screen.                       */
+      const gbForm = document.getElementById('gbForm')
+
+      if (GUESTBOOK_URL && gbForm) {
+        const gbName = document.getElementById('gbName')
+        const gbMsg = document.getElementById('gbMsg')
+        const gbTrap = document.getElementById('gbTrap')
+        const gbSend = document.getElementById('gbSend')
+        const gbStatus = document.getElementById('gbStatus')
+        const gbWall = document.getElementById('gbWall')
+
+        const COOLDOWN = 45000   // one blessing per guest per pause
+        let loaded = false
+        let sending = false
+
+        const say = (text, tone) => {
+          gbStatus.textContent = text
+          if (tone) gbStatus.setAttribute('data-tone', tone)
+          else gbStatus.removeAttribute('data-tone')
+        }
+
+        function paintWall(entries) {
+          gbWall.textContent = ''
+          if (!entries.length) {
+            const p = document.createElement('p')
+            p.className = 'gb-empty'
+            p.textContent = 'كن أول من يبارك'
+            gbWall.appendChild(p)
+            return
+          }
+          for (const entry of entries) {
+            const li = document.createElement('li')
+            li.className = 'gb-note'
+            const msg = document.createElement('p')
+            msg.className = 'gb-msg'
+            msg.textContent = entry.message
+            const from = document.createElement('p')
+            from.className = 'gb-from'
+            from.textContent = entry.name
+            li.append(msg, from)
+            gbWall.appendChild(li)
+          }
+        }
+
+        async function loadWall() {
+          if (loaded) return
+          loaded = true
+          try {
+            const res = await fetch(GUESTBOOK_URL, { method: 'GET' })
+            const data = await res.json()
+            if (!data.ok) throw new Error(data.error || 'refused')
+            paintWall(data.entries || [])
+          } catch (err) {
+            loaded = false
+            const p = document.createElement('p')
+            p.className = 'gb-empty'
+            p.textContent = 'تعذّر تحميل المباركات الآن'
+            gbWall.textContent = ''
+            gbWall.appendChild(p)
+          }
+        }
+
+        gbForm.addEventListener('submit', async (e) => {
+          e.preventDefault()
+          if (sending) return
+
+          const name = gbName.value.trim()
+          const message = gbMsg.value.trim()
+          if (!name || !message) return say('اكتب اسمك ومباركتك', 'bad')
+
+          const last = Number(localStorage.getItem('gb-last') || 0)
+          if (Date.now() - last < COOLDOWN) {
+            return say('شكراً لك — انتظر قليلاً قبل مباركة أخرى', 'bad')
+          }
+
+          sending = true
+          gbSend.disabled = true
+          say('جارٍ الإرسال…')
+
+          try {
+            const res = await fetch(GUESTBOOK_URL, {
+              method: 'POST',
+              // text/plain keeps this a simple request, and Apps Script never
+              // answers the preflight that any other content type would need.
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify({ name, message, website: gbTrap.value }),
+            })
+            const data = await res.json()
+            if (!data.ok) throw new Error(data.error || 'refused')
+
+            localStorage.setItem('gb-last', String(Date.now()))
+            gbName.value = ''
+            gbMsg.value = ''
+            say('وصلت مباركتك — شكراً لك')
+            paintWall(data.entries || [])
+            gbWall.scrollTop = 0
+          } catch (err) {
+            say('لم تصل المباركة، حاول مرة أخرى', 'bad')
+          } finally {
+            sending = false
+            gbSend.disabled = false
+          }
+        })
+
+        // The wall loads when its page is reached, not at boot -- a guest who
+        // never scrolls that far should not pay for it.
+        gbLoad = loadWall
       }
 
       /* ── Boot ──────────────────────────────────────────────────────────── */

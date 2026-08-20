@@ -728,10 +728,14 @@
       }
 
       .verse {
+        max-width: 21rem;
+        margin-inline: auto;
         font-family: var(--display);
-        font-size: 14px;
-        line-height: 2;
+        /* A whole verse, not a fragment: smaller, and given room to wrap. */
+        font-size: 12.5px;
+        line-height: 1.95;
         color: var(--muted);
+        text-wrap: balance;
       }
 
       .verse span { display: block; font-size: 11.5px; opacity: 0.85; margin-top: 4px; }
@@ -958,6 +962,22 @@
       /* ══════════════════════════════════════════════════════════════════
          SCENE 3 — RSVP
          ═════════════════════════════════════════════════════════════════ */
+
+      /* Held well back: the reply is the one screen with something to do on
+         it, and the photograph must not compete with the type. */
+      .rsvp-photo::after {
+        background: linear-gradient(180deg, rgba(251,248,243,.9) 0%, rgba(251,248,243,.96) 44%, rgba(251,248,243,.99) 100%);
+      }
+
+      .rsvp-photo img { opacity: .5; }
+
+      .rsvp-close {
+        margin-top: 18px;
+        font-family: var(--display);
+        font-size: 14px;
+        line-height: 1.8;
+        color: var(--ink);
+      }
 
       .rsvp-wrap {
         position: absolute;
@@ -1644,7 +1664,8 @@
           <span class="rule" data-in style="--i: 4" aria-hidden="true"></span>
 
           <p class="verse" data-in style="--i: 5">
-            عَرَّفْتُهُمُ اسْمَكَ وَسَأُعَرِّفُهُمْ
+            وَعَرَّفْتُهُمُ اسْمَكَ وَسَأُعَرِّفُهُمْ، لِيَكُونَ فِيهِمُ الْحُبُّ الَّذِي أَحْبَبْتَنِي بِهِ،
+            وَأَكُونَ أَنَا فِيهِمْ
             <span>(يوحنا ١٧: ٢٦)</span>
           </p>
 
@@ -1715,8 +1736,8 @@
 
       <!-- ══════════════ SCENE 4 — RSVP ══════════════ -->
       <section class="scene" id="scene-3" aria-label="تأكيد الحضور">
-        <div class="roses" aria-hidden="true">
-          <img src="assets/rose-bg.jpg" alt="" loading="lazy" onerror="this.remove()" />
+        <div class="photo photo--bw rsvp-photo" aria-hidden="true">
+          <img src="assets/finale.jpg" alt="" loading="lazy" onerror="this.remove()" />
         </div>
 
         <div class="ornament ornament--tl" aria-hidden="true">
@@ -1790,28 +1811,11 @@
               >اعتذار من كارول — واتساب</a
             >
           </div>
+
+          <p class="rsvp-close" data-in style="--i: 8">فرحنا تبدأ مع الربّ ونُكمّل بحضوركم</p>
         </div>
       </section>
 
-      <!-- ══════════════ SCENE 5 — FINALE ══════════════ -->
-      <section class="scene" id="scene-4" aria-label="ختام">
-        <div class="photo photo--bw" aria-hidden="true">
-          <img src="assets/finale.jpg" alt="" loading="lazy" onerror="this.remove()" />
-        </div>
-
-        <div class="hearts" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M12 20C8 16.6 3 13.6 3 9.2A4.2 4.2 0 0 1 12 6.6 4.2 4.2 0 0 1 21 9.2c0 4.4-5 7.4-9 10.8Z" /></svg>
-          <svg viewBox="0 0 24 24"><path d="M12 20C8 16.6 3 13.6 3 9.2A4.2 4.2 0 0 1 12 6.6 4.2 4.2 0 0 1 21 9.2c0 4.4-5 7.4-9 10.8Z" /></svg>
-          <svg viewBox="0 0 24 24"><path d="M12 20C8 16.6 3 13.6 3 9.2A4.2 4.2 0 0 1 12 6.6 4.2 4.2 0 0 1 21 9.2c0 4.4-5 7.4-9 10.8Z" /></svg>
-        </div>
-
-        <p class="finale-names" data-in style="--i: 0">جورج &nbsp;و&nbsp; كارول</p>
-        <p class="finale-line" data-in style="--i: 1">فرحنا تبدأ مع الربّ ونُكمّل بحضوركم</p>
-
-        <span class="rings-badge" aria-hidden="true">
-          <svg viewBox="0 0 200 120" fill="none"><use href="#ringsArt" /></svg>
-        </span>
-      </section>
     </main>
 
     <nav class="dots" id="dots" aria-label="التنقل بين الشاشات"></nav>
@@ -1874,7 +1878,7 @@
          unmounted mid-transition — that causes a flash.
          ═════════════════════════════════════════════════════════════════════ */
 
-      const SCENES = 5
+      const SCENES = 4
       const DUR = 700          // must match --scene-ms
       const LOCK = DUR + 100   // input is ignored for the whole transition
 
@@ -2018,11 +2022,17 @@
         }
       }
 
-      seal.addEventListener('click', (e) => {
+      /* The seal is where the eye goes, but the whole door should answer a
+         tap — hunting for a target is not what a door asks of anyone. */
+      const openFromDoor = (e) => {
         e.stopPropagation()
         cancelAutoplay(false)
         openEnvelope()
-      })
+      }
+
+      seal.addEventListener('click', openFromDoor)
+      scene0.addEventListener('click', openFromDoor)
+      scene0.style.cursor = 'pointer'
 
       /* ── The swipe hint: shown once, on Scene 1, then never again ──────── */
 

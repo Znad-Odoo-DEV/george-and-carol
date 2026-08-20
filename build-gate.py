@@ -1,21 +1,19 @@
 # -*- coding: utf-8 -*-
 """
-Renders the arched-door gate as static SVG.
+Renders the gate as static SVG: a pair of arched church doors in a stone
+surround, dressed with a blossom garland.
 
-The original lives in the Ahmed & Alaa React project, where the fluting,
-dentils, voussoirs and blossoms are produced by loops at render time. This
-invitation is a single HTML file with no build step, so those loops are
-unrolled here once and the result is pasted in.
+This invitation is a single HTML file with no build step, so the loops that
+would produce the planks, studs, fluting, dentils, voussoirs and blossoms are
+unrolled here once and the result pasted in.
 
     python build-gate.py > gate-fragment.html
 
-Geometry is unchanged from the original: the leaf is drawn in a 190 x 670
-space that maps onto the left half of the arched opening, and the surround in
-600 x 900. Only the ids are namespaced differently, so the two mirrored leaves
-never collide.
+Geometry: a leaf is drawn in a 190 x 670 space that maps onto the left half of
+the arched opening, and the surround in 600 x 900. The right-hand leaf is the
+left one mirrored in CSS, so ids are namespaced per side to avoid collisions.
 """
 
-import io
 import math
 import sys
 
@@ -24,88 +22,102 @@ w = out.append
 
 
 def leaf(side):
-    """One door leaf. The right-hand copy is this mirrored in CSS."""
+    """
+    One leaf of a church door.
+
+    Heavy timber laid in vertical boards, banded by two iron straps with
+    hammered studs, and struck with a cross in the head of the arch. Where the
+    earlier neoclassical leaf was pale and carved, this one is dark and plain:
+    a church door is joinery and ironwork, not cabinetmaking.
+    """
     i = lambda n: f"door-{side}-{n}"
 
-    # The eight-petal rosette at the head of the upper panel.
-    petals = []
-    for k in range(8):
-        a = (k / 8) * math.pi * 2
-        cx, cy = 95 + math.cos(a) * 16, 132 + math.sin(a) * 16
-        rot = math.degrees(a) + 90
-        petals.append(
-            f'<ellipse cx="{cx:.2f}" cy="{cy:.2f}" rx="3.4" ry="6.4" '
-            f'transform="rotate({rot:.2f} {cx:.2f} {cy:.2f})"/>'
+    # ── Boards. Nine of them, each seam a dark score with a lit edge beside
+    #    it, which is what reads as a plank rather than a stripe.
+    boards = []
+    board_w = 190 / 9
+    for k in range(1, 9):
+        x = k * board_w
+        boards.append(
+            f'<line x1="{x:.1f}" y1="0" x2="{x:.1f}" y2="670" stroke="#2b1d12" stroke-width="1.6" opacity=".55"/>'
+            f'<line x1="{x + 1.4:.1f}" y1="0" x2="{x + 1.4:.1f}" y2="670" stroke="#8a6a45" stroke-width="1" opacity=".28"/>'
         )
 
-    drop = []
-    for cx, cy, r in [(95, 262, 7), (83, 253, 5), (107, 253, 5),
-                      (88, 272, 4.4), (102, 272, 4.4), (95, 280, 3.6)]:
-        drop.append(
-            f'<circle cx="{cx}" cy="{cy}" r="{r}"/>'
-            f'<circle cx="{cx}" cy="{cy}" r="{r * 0.4:.2f}" fill="#f6ecd6" opacity=".7"/>'
+    # ── Iron straps. Two bands with a spade end, studded along their length.
+    def strap(y, h):
+        studs = "".join(
+            f'<circle cx="{sx}" cy="{y + h / 2:.1f}" r="3.1" fill="#4a4038"/>'
+            f'<circle cx="{sx - 0.7}" cy="{y + h / 2 - 0.8:.1f}" r="1.5" fill="#8d8176" opacity=".8"/>'
+            for sx in range(18, 176, 22)
+        )
+        return (
+            f'<rect x="0" y="{y}" width="190" height="{h}" fill="url(#{i("iron")})"/>'
+            f'<rect x="0" y="{y}" width="190" height="1.4" fill="#8d8176" opacity=".35"/>'
+            f'<rect x="0" y="{y + h - 1.4:.1f}" width="190" height="1.4" fill="#14100c" opacity=".5"/>'
+            f'{studs}'
         )
 
-    rosettes = "".join(
-        f'<circle cx="{cx}" cy="{cy}" r="3.6" fill="url(#{i("gold")})" opacity=".8"/>'
-        for cx, cy in [(46, 408), (144, 408), (46, 588), (144, 588)]
-    )
+    # ── Studs marching around the arched head, following the clip curve.
+    head_studs = []
+    for k in range(9):
+        a = math.pi * (1.0 + (k / 8) * 0.5)      # 180° round to 270°
+        cx = 190 + math.cos(a) * 168
+        cy = 190 + math.sin(a) * 168
+        head_studs.append(
+            f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="3" fill="#4a4038"/>'
+            f'<circle cx="{cx - 0.7:.1f}" cy="{cy - 0.8:.1f}" r="1.4" fill="#8d8176" opacity=".8"/>'
+        )
 
     return f'''<svg class="door__svg" viewBox="0 0 190 670" preserveAspectRatio="none" fill="none" aria-hidden="true">
 <defs>
 <clipPath id="{i('clip')}"><path d="M0 670 V190 A190 190 0 0 1 190 0 V670 Z"/></clipPath>
-<linearGradient id="{i('face')}" x1="0" y1="0" x2="1" y2="0.35">
-<stop offset="0%" stop-color="#f6ecdd"/><stop offset="45%" stop-color="#efe2ce"/><stop offset="100%" stop-color="#e0cdb1"/>
+<linearGradient id="{i('wood')}" x1="0" y1="0" x2="1" y2="0.3">
+<stop offset="0%" stop-color="#9a7145"/><stop offset="42%" stop-color="#7d5a34"/><stop offset="100%" stop-color="#553c22"/>
 </linearGradient>
-<linearGradient id="{i('recess')}" x1="0" y1="0" x2="0.3" y2="1">
-<stop offset="0%" stop-color="#d8c4a2"/><stop offset="100%" stop-color="#eee1cc"/>
+<linearGradient id="{i('iron')}" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="#5b5049"/><stop offset="45%" stop-color="#3a322c"/><stop offset="100%" stop-color="#241e19"/>
 </linearGradient>
 <linearGradient id="{i('gold')}" x1="0" y1="0" x2="0.6" y2="1">
 <stop offset="0%" stop-color="#eed7a0"/><stop offset="50%" stop-color="#c9a768"/><stop offset="100%" stop-color="#8f7240"/>
 </linearGradient>
 <linearGradient id="{i('shade')}" x1="0" y1="0" x2="1" y2="0">
-<stop offset="0%" stop-color="#8a6f4e" stop-opacity=".16"/><stop offset="14%" stop-color="#8a6f4e" stop-opacity="0"/>
-<stop offset="82%" stop-color="#8a6f4e" stop-opacity="0"/><stop offset="100%" stop-color="#6d5637" stop-opacity=".3"/>
+<stop offset="0%" stop-color="#120c07" stop-opacity=".3"/><stop offset="16%" stop-color="#120c07" stop-opacity="0"/>
+<stop offset="80%" stop-color="#120c07" stop-opacity="0"/><stop offset="100%" stop-color="#120c07" stop-opacity=".5"/>
 </linearGradient>
 </defs>
 <g clip-path="url(#{i('clip')})">
-<rect x="0" y="0" width="190" height="670" fill="url(#{i('face')})"/>
-<path d="M12 670 V194 A178 178 0 0 1 190 16" stroke="#fbf5ea" stroke-width="3" fill="none" opacity=".9"/>
-<path d="M18 670 V196 A172 172 0 0 1 190 24" stroke="#cdb693" stroke-width="1" fill="none" opacity=".7"/>
-<path d="M30 306 V126 A65 65 0 0 1 160 126 V306 Z" fill="url(#{i('recess')})" stroke="#c3ac88" stroke-width="1.2"/>
-<path d="M36 300 V128 A59 59 0 0 1 154 128 V300 Z" fill="none" stroke="#fbf5ea" stroke-width="1.5" opacity=".8"/>
-<g fill="url(#{i('gold')})" opacity=".92">
-<circle cx="95" cy="132" r="9"/><circle cx="95" cy="132" r="4" fill="#f3e6cd" opacity=".75"/>
-{''.join(petals)}
+<rect x="0" y="0" width="190" height="670" fill="url(#{i('wood')})"/>
+{''.join(boards)}
+
+<!-- The arched frame the boards are set into. -->
+<path d="M10 670 V192 A180 180 0 0 1 190 12" stroke="#2b1d12" stroke-width="7" fill="none" opacity=".65"/>
+<path d="M14 670 V194 A176 176 0 0 1 190 18" stroke="#916f47" stroke-width="1.4" fill="none" opacity=".45"/>
+{''.join(head_studs)}
+
+<!-- The cross, struck in gold in the field between the straps — the
+     classic place on a church door, and it leaves the head of the arch
+     clear for the monogram. -->
+<g fill="url(#{i('gold')})" opacity=".95">
+<rect x="89" y="330" width="12" height="118" rx="2"/>
+<rect x="61" y="364" width="68" height="12" rx="2"/>
 </g>
-<g stroke="url(#{i('gold')})" stroke-width="1.6" fill="none" stroke-linecap="round">
-<path d="M95 158 C95 186 82 200 66 208 C56 213 50 224 54 234 C58 243 70 242 74 233 C79 221 72 210 62 208"/>
-<path d="M95 158 C95 186 108 200 124 208 C134 213 140 224 136 234 C132 243 120 242 116 233 C111 221 118 210 128 208"/>
-<path d="M95 168 V262" opacity=".75"/>
+<g fill="#f6ecd6" opacity=".26">
+<rect x="89" y="330" width="3.5" height="118" rx="2"/>
+<rect x="61" y="364" width="68" height="3.5" rx="2"/>
 </g>
-<g fill="url(#{i('gold')})" opacity=".85">{''.join(drop)}</g>
-<rect x="30" y="326" width="130" height="46" rx="1" fill="url(#{i('recess')})" stroke="#c3ac88" stroke-width="1.2"/>
-<g stroke="url(#{i('gold')})" stroke-width="1.3" fill="none" stroke-linecap="round">
-<path d="M42 349 C58 336 76 336 95 349 C114 336 132 336 148 349"/>
-<path d="M42 349 C58 362 76 362 95 349 C114 362 132 362 148 349" opacity=".6"/>
-</g>
-<circle cx="95" cy="349" r="3.4" fill="url(#{i('gold')})"/>
-<rect x="30" y="392" width="130" height="212" rx="1" fill="url(#{i('recess')})" stroke="#c3ac88" stroke-width="1.2"/>
-<rect x="36" y="398" width="118" height="200" rx="1" fill="none" stroke="#fbf5ea" stroke-width="1.5" opacity=".8"/>
-<path d="M62 436 H128 V496 C128 534 95 552 95 552 C95 552 62 534 62 496 Z" fill="#f3e8d6" stroke="url(#{i('gold')})" stroke-width="1.6"/>
-<path d="M69 443 H121 V494 C121 526 95 541 95 541 C95 541 69 526 69 494 Z" fill="none" stroke="url(#{i('gold')})" stroke-width=".8" opacity=".6"/>
-<g stroke="url(#{i('gold')})" stroke-width="1.2" fill="none" stroke-linecap="round">
-<path d="M95 460 C86 470 86 486 95 498 C104 486 104 470 95 460 Z"/><path d="M95 452 V462"/>
-</g>
-{rosettes}
-<rect x="12" y="620" width="178" height="50" fill="#e3d2b8" opacity=".5"/>
-<path d="M12 620 H190" stroke="#fbf5ea" stroke-width="2" opacity=".7"/>
+
+{strap(292, 26)}
+{strap(486, 26)}
+
+<!-- The ring handle, hanging from a boss on the meeting stile. -->
 <g>
-<rect x="164" y="330" width="16" height="74" rx="8" fill="url(#{i('gold')})" opacity=".9"/>
-<circle cx="172" cy="367" r="9" fill="#f3e6cd" opacity=".55"/>
-<circle cx="172" cy="367" r="9" fill="none" stroke="url(#{i('gold')})" stroke-width="1.6"/>
-<circle cx="172" cy="388" r="4.5" fill="none" stroke="url(#{i('gold')})" stroke-width="1.4"/>
+<circle cx="163" cy="382" r="9" fill="url(#{i('iron')})"/>
+<circle cx="163" cy="382" r="4" fill="#14100c" opacity=".6"/>
+<ellipse cx="163" cy="404" rx="16" ry="18" fill="none" stroke="url(#{i('iron')})" stroke-width="5"/>
+<ellipse cx="163" cy="403" rx="16" ry="18" fill="none" stroke="#8d8176" stroke-width="1" opacity=".4"/>
 </g>
+
+<!-- Depth at the meeting stile, so the pair reads as two solid slabs. -->
 <rect x="0" y="0" width="190" height="670" fill="url(#{i('shade')})"/>
 </g></svg>'''
 
@@ -146,12 +158,11 @@ def surround():
         voussoirs += (f'<line x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}" '
                       f'stroke="#d9c8ad" stroke-width=".8" opacity=".8"/>')
 
-    keystone = ""
-    for k in range(6):
-        a = (k / 6) * math.pi * 2
-        cx, cy = 300 + math.cos(a) * 12, 168 + math.sin(a) * 12
-        keystone += (f'<ellipse cx="{cx:.2f}" cy="{cy:.2f}" rx="2.6" ry="5" '
-                     f'transform="rotate({math.degrees(a) + 90:.2f} {cx:.2f} {cy:.2f})"/>')
+    # A cross on the keystone, in place of the earlier rosette.
+    keystone_cross = (
+        '<rect x="296" y="152" width="8" height="34" rx="1"/>'
+        '<rect x="288" y="163" width="24" height="8" rx="1"/>'
+    )
 
     wall = "".join(
         f'<g opacity=".75"><rect x="{x}" y="180" width="36" height="640" fill="none" stroke="#d3c2a8"/>'
@@ -192,7 +203,7 @@ def surround():
 <path d="M108 380 A192 192 0 0 1 492 380" fill="none" stroke="#cdb693" stroke-width="1"/>
 {voussoirs}
 <path d="M274 186 H326 L334 148 H266 Z" fill="url(#stoneLight)" stroke="#cdb693" stroke-width=".9"/>
-<g fill="url(#goldTrim)" opacity=".85"><circle cx="300" cy="168" r="8"/>{keystone}</g>
+<g fill="url(#goldTrim)" opacity=".9">{keystone_cross}</g>
 <path d="M118 200 C160 206 186 232 196 268 C166 264 134 240 118 200 Z" fill="none" stroke="url(#goldTrim)" stroke-width="1.2" opacity=".55"/>
 <path d="M482 200 C440 206 414 232 404 268 C434 264 466 240 482 200 Z" fill="none" stroke="url(#goldTrim)" stroke-width="1.2" opacity=".55"/>
 <rect x="0" y="848" width="600" height="52" fill="url(#floorFace)"/>
@@ -204,9 +215,9 @@ def surround():
 
 def garland():
     """Blossom garland over the arch and down both jambs, deterministically."""
-    tones = ['#f0d6d1', '#e6c2bd', '#f7ece5', '#dfb0ab', '#fbf5ee', '#ecd3cd', '#f4e3da']
-
-    state = [20260918 & 0xFFFFFFFF]
+    # Blush with the lilac of the reference's wisteria running through it.
+    tones = ['#f0d6d1', '#cbb2d8', '#f7ece5', '#dfb0ab', '#b9a3ce', '#ecd3cd', '#e0cbe4']
+    state = [20260920 & 0xFFFFFFFF]
 
     def rnd():
         x = state[0]
@@ -217,7 +228,6 @@ def garland():
         return state[0] / 4294967296
 
     blossoms = []
-
     arch_count = 300
     for k in range(arch_count):
         t = k / (arch_count - 1)

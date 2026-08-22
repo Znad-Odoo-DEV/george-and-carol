@@ -749,7 +749,8 @@
       .card-foot {
         position: absolute;
         inset-inline: 26px;
-        bottom: calc(58px + env(safe-area-inset-bottom));
+        /* Clear of the audio button in the corner below it. */
+        bottom: calc(76px + env(safe-area-inset-bottom));
         display: flex;
         align-items: flex-start;
         justify-content: space-between;
@@ -1490,6 +1491,50 @@
          CHROME — dots, hint, grain, loader
          ═════════════════════════════════════════════════════════════════ */
 
+      /* Sits on the same line as the dots, at the other end of it. */
+      .audio {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: calc(17px + env(safe-area-inset-bottom));
+        z-index: 20;
+        display: flex;
+        justify-content: flex-end;   /* RTL: the left of the screen */
+        padding: 0 18px;
+        opacity: 0;
+        visibility: hidden;
+        /* The bar is full width. If it ever took pointer events it would eat
+           every tap along the bottom of the screen, including the ones the
+           deck turns pages with -- so only the button inside it does. */
+        pointer-events: none;
+        transition: opacity 400ms ease, visibility 400ms;
+      }
+
+      .audio[data-show] { opacity: 1; visibility: visible; }
+
+      .audio-btn {
+        display: grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        color: var(--gold-shadow);
+        background: rgba(255, 253, 247, 0.55);
+        border: 1px solid rgba(201, 162, 39, 0.45);
+        border-radius: 999px;
+        cursor: pointer;
+        pointer-events: auto;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .audio-btn svg { width: 17px; height: 17px; }
+
+      /* One drawing, two states: the waves and the slash trade places. */
+      .audio-slash { opacity: 0; }
+      .audio-btn[data-muted] { color: var(--muted); }
+      .audio-btn[data-muted] .audio-wave { opacity: 0; }
+      .audio-btn[data-muted] .audio-slash { opacity: 1; }
+
       .dots {
         position: fixed;
         left: 0;
@@ -1637,6 +1682,7 @@
         #loader,
         .grain,
         .dots,
+        .audio,
         .swipe-hint {
           left: 50%;
           right: auto;
@@ -2059,6 +2105,22 @@
          gesture, so playback is never blocked. -->
     <audio id="bell" src="assets/bell.mp3" preload="auto" aria-hidden="true"></audio>
 
+    <!-- preload="none": nothing is fetched until the door is tapped, so three
+         megabytes never stand between a guest and the invitation. -->
+    <audio id="music" src="assets/processional.mp3" preload="none" loop aria-hidden="true"></audio>
+
+    <div class="audio" id="audioBar">
+      <button class="audio-btn" id="musicToggle" type="button" data-interactive aria-label="إيقاف الموسيقى">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 9.5h3.2L12 5.6v12.8L7.2 14.5H4Z" />
+          <path class="audio-wave" d="M15.4 9.6a3.4 3.4 0 0 1 0 4.8" />
+          <path class="audio-wave" d="M17.9 7.3a6.9 6.9 0 0 1 0 9.4" />
+          <path class="audio-slash" d="M16.2 9.8l4.6 4.4M20.8 9.8l-4.6 4.4" />
+        </svg>
+      </button>
+    </div>
+
     <div class="grain" aria-hidden="true"></div>
     <p id="live" aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)"></p>
 
@@ -2249,11 +2311,107 @@
         }
       }
 
+      /* ── The processional ──────────────────────────────────────────────
+         The bell runs twelve seconds and decays through the last five, so the
+         music comes up under that tail rather than after silence: it reads as
+         a handover instead of as a gap where the page seemed to break.
+
+         Browsers refuse audio nobody asked for, so the element is unlocked
+         inside the tap that opens the door -- played, paused and rewound --
+         and only then scheduled. That tap also starts the download, which is
+         why preload is off: three megabytes never delay the invitation. */
+      const music = document.getElementById('music')
+      const musicBtn = document.getElementById('musicToggle')
+      const audioBar = document.getElementById('audioBar')
+
+      const HANDOVER = 6500    // ms after the tap, into the bell's decay
+      const FADE_IN = 3500
+      const LEVEL = 0.55       // it plays under the reading, not over it
+
+      let muted = localStorage.getItem('gc-muted') === '1'
+      let musicTimer = 0
+      let fadeTimer = 0
+
+      function paintMusicBtn() {
+        if (!musicBtn) return
+        musicBtn.toggleAttribute('data-muted', muted)
+        musicBtn.setAttribute('aria-label', muted ? 'تشغيل الموسيقى' : 'إيقاف الموسيقى')
+      }
+
+      function fadeTo(target, ms) {
+        clearInterval(fadeTimer)
+        const from = music.volume
+        const started = performance.now()
+        fadeTimer = setInterval(() => {
+          const t = Math.min(1, (performance.now() - started) / ms)
+          music.volume = Math.max(0, Math.min(1, from + (target - from) * t))
+          if (t === 1) {
+            clearInterval(fadeTimer)
+            if (target === 0) music.pause()
+          }
+        }, 40)
+      }
+
+      /* Spent inside the tap, while the gesture still counts. */
+      function unlockMusic() {
+        if (!music) return
+        try {
+          music.volume = 0
+          const played = music.play()
+          if (played && played.then) {
+            played.then(() => { music.pause(); music.currentTime = 0 }).catch(() => {})
+          }
+        } catch (_) {
+          /* no music, no consequence — the invitation is the point */
+        }
+      }
+
+      function startMusic() {
+        if (!music || muted) return
+        try {
+          music.volume = 0
+          const played = music.play()
+          if (played && played.catch) played.catch(() => {})
+          fadeTo(LEVEL, FADE_IN)
+        } catch (_) {}
+      }
+
+      if (music && musicBtn) {
+        paintMusicBtn()
+
+        musicBtn.addEventListener('click', (e) => {
+          e.stopPropagation()
+          muted = !muted
+          localStorage.setItem('gc-muted', muted ? '1' : '0')
+          paintMusicBtn()
+          if (muted) fadeTo(0, 400)
+          else startMusic()
+        })
+
+        /* A tab left in the background should not keep playing into a room
+           nobody is in. It picks up where it stopped. */
+        let pausedByHiding = false
+        addEventListener('visibilitychange', () => {
+          if (document.hidden) {
+            pausedByHiding = !music.paused
+            if (pausedByHiding) music.pause()
+          } else if (pausedByHiding && !muted) {
+            pausedByHiding = false
+            const played = music.play()
+            if (played && played.catch) played.catch(() => {})
+          }
+        })
+      }
+
       /* The seal is where the eye goes, but the whole door should answer a
          tap — hunting for a target is not what a door asks of anyone. */
       const openFromDoor = (e) => {
         e.stopPropagation()
         cancelAutoplay(false)
+        unlockMusic()
+        clearTimeout(musicTimer)
+        musicTimer = setTimeout(startMusic, HANDOVER)
+        if (audioBar) audioBar.setAttribute('data-show', '')
         openEnvelope()
       }
 

@@ -241,7 +241,7 @@ def surround():
 def garland():
     """Blossom garland over the arch and down both jambs, deterministically."""
     # Blush with the lilac of the reference's wisteria running through it.
-    tones = ['#f0d6d1', '#cbb2d8', '#f7ece5', '#dfb0ab', '#b9a3ce', '#ecd3cd', '#e0cbe4']
+    tones = ['#efe4cd', '#f7f1e4', '#e6d8bd', '#dccbab', '#f2e9d8', '#e3d2a4', '#d8c8a6']
     state = [20260920 & 0xFFFFFFFF]
 
     def rnd():
@@ -256,36 +256,39 @@ def garland():
     # stage the opening spans x 123..477, y 115..785, and its arch is a true
     # semicircle springing at y 292.5 with radius 177 -- so the garland rides
     # just outside that, at 196.
-    ARCH_CX, ARCH_CY, ARCH_R = 300.0, 292.5, 196.0
-    JAMB_L, JAMB_R, JAMB_TOP, JAMB_RUN = 118.0, 482.0, 292.0, 490.0
+    # The opening spans x 123..477 with a radius of 177. Everything here
+    # sits outside that, on the stone -- inside it, the blossoms would be
+    # pasted across doors that swing away from under them.
+    ARCH_CX, ARCH_CY, ARCH_R = 300.0, 292.5, 209.0
+    JAMB_L, JAMB_R, JAMB_TOP, JAMB_RUN = 102.0, 498.0, 292.0, 470.0
 
     blossoms = []
-    arch_count = 300
+    arch_count = 190
     for k in range(arch_count):
         t = k / (arch_count - 1)
         ang = math.pi * (1.02 + t * 0.96)
-        spread = 26 + math.sin(t * math.pi) * 22
+        spread = 13 + math.sin(t * math.pi) * 11
         r = ARCH_R + (rnd() - 0.5) * spread
         blossoms.append((ARCH_CX + math.cos(ang) * r, ARCH_CY + math.sin(ang) * r * 0.98,
-                         1.3 + rnd() * 3.6, int(rnd() * len(tones)), t * 700 + rnd() * 260))
+                         1.1 + rnd() * 2.5, int(rnd() * len(tones)), t * 700 + rnd() * 260))
 
     def cascade(x, count, spread, offset):
         for k in range(count):
             t = k / (count - 1)
             blossoms.append((x + (rnd() - 0.5) * spread + math.sin(t * 5 + offset) * 14,
                              JAMB_TOP + t * JAMB_RUN,
-                             1.4 + rnd() * 4.2 * (1 - t * 0.3),
+                             1.2 + rnd() * 2.8 * (1 - t * 0.3),
                              int(rnd() * len(tones)),
                              500 + t * 620 + rnd() * 220))
 
-    cascade(JAMB_L, 175, 58, 0)
-    cascade(JAMB_R, 110, 46, 2.1)
+    cascade(JAMB_L, 96, 30, 0)
+    cascade(JAMB_R, 64, 26, 2.1)
 
     parts = []
     for x, y, r, tone, delay in blossoms:
         parts.append(
             f'<g class="garland__blossom" style="--d:{delay:.0f}ms">'
-            f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{r:.2f}" fill="{tones[tone]}" opacity="{0.55 + (tone % 4) * 0.15:.2f}"/>'
+            f'<circle cx="{x:.1f}" cy="{y:.1f}" r="{r:.2f}" fill="{tones[tone]}" opacity="{0.4 + (tone % 4) * 0.11:.2f}"/>'
             f'<circle cx="{x - r * 0.25:.1f}" cy="{y - r * 0.3:.1f}" r="{r * 0.55:.2f}" fill="url(#blossomSheen)"/>'
             f'</g>'
         )

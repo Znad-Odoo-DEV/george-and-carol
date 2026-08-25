@@ -2897,6 +2897,30 @@
         setInterval(tickCountdown, 1000)
       }
 
+      /* ── من فتح الدعوة ─────────────────────────────────────────────────
+         Cloudflare Web Analytics. Paste the site token between the quotes and
+         it starts counting; leave it empty and nothing is loaded at all.
+
+         Cookieless by design, so there is no consent notice to add. It counts
+         opens, referrers, countries and devices -- never identities. If a
+         guest blocks it, the beacon simply fails and the invitation does not
+         notice.                                                            */
+      const ANALYTICS_TOKEN = ''
+
+      if (ANALYTICS_TOKEN) {
+        // After the entrance, not during it: the door is what the first
+        // second belongs to.
+        addEventListener('load', () => {
+          setTimeout(() => {
+            const beacon = document.createElement('script')
+            beacon.defer = true
+            beacon.src = 'https://static.cloudflareinsights.com/beacon.min.js'
+            beacon.setAttribute('data-cf-beacon', JSON.stringify({ token: ANALYTICS_TOKEN }))
+            document.head.appendChild(beacon)
+          }, 1200)
+        })
+      }
+
       /* ── Boot ──────────────────────────────────────────────────────────── */
 
       function start() {

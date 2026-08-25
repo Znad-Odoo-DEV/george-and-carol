@@ -2905,7 +2905,7 @@
          opens, referrers, countries and devices -- never identities. If a
          guest blocks it, the beacon simply fails and the invitation does not
          notice.                                                            */
-      const ANALYTICS_TOKEN = ''
+      const ANALYTICS_TOKEN = '1a12dc8acfd34467844d88b417071959'
 
       if (ANALYTICS_TOKEN) {
         // After the entrance, not during it: the door is what the first
@@ -2913,7 +2913,8 @@
         addEventListener('load', () => {
           setTimeout(() => {
             const beacon = document.createElement('script')
-            beacon.defer = true
+            // type="module" is the form Cloudflare issues the snippet in.
+            beacon.type = 'module'
             beacon.src = 'https://static.cloudflareinsights.com/beacon.min.js'
             beacon.setAttribute('data-cf-beacon', JSON.stringify({ token: ANALYTICS_TOKEN }))
             document.head.appendChild(beacon)
